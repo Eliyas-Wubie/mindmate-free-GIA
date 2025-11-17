@@ -83,18 +83,30 @@ const SpaceVis = ({ limit }) => {
     randomSmallLetters.map((item) => {
       const randomVary = vary[Math.floor(Math.random() * vary.length)];
       if (randomVary) {
-        setLetterPairs((prev) => [
-          ...prev,
-          [item, capLetters[Math.floor(Math.random() * capLetters.length)]],
-        ]);
+        setLetterPairs((prev) => {
+          let randomCap=item.toUpperCase()
+          while (randomCap === item.toUpperCase()) {
+            console.log("🎌🎌🎌🎌",{randomCap,item})
+            randomCap = capLetters[Math.floor(Math.random() * capLetters.length)];
+            console.log("✔✔✔✔",{randomCap,item})
+
+          }
+          const newArray=[...prev, [item, randomCap]];
+          return newArray
+        });
       } else {
         setLetterPairs((prev) => [...prev, [item, item.toUpperCase()]]);
+        console.log("adding to non varying count")
         setNonVaryCounter((prev) => prev + 1);
       }
     });
   }
   function submitAnswer(answer) {
-    setTimeTaken((prev) => {
+    // setNonVaryCounter((original) => {
+
+    // return original
+    // });
+          setTimeTaken((prev) => {
       const newValue = Date.now() - prev;
       // template.time = newValue;
       // new

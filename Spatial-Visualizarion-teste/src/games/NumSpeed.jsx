@@ -13,9 +13,9 @@ const NumSpeed = ({ limit }) => {
   const [numberOfCorrects, setNumberOfCorrects] = useState(0);
   //generate 3 numbers between 1 and 99
   const generateNumbers = () => {
-    let num1 = Math.floor(Math.random() * 12) + 1;
-    let num2 = Math.floor(Math.random() * 12) + 1;
-    let num3 = Math.floor(Math.random() * 12) + 1;
+    let num1 = Math.floor(Math.random() * 25) + 1;
+    let num2 = Math.floor(Math.random() * 25) + 1;
+    let num3 = Math.floor(Math.random() * 25) + 1;
     // get the min, max, and median of the numbers
     let min = Math.min(num1, num2, num3);
     let max = Math.max(num1, num2, num3);
@@ -23,9 +23,9 @@ const NumSpeed = ({ limit }) => {
     let dif1 = Math.abs(median - min);
     let dif2 = Math.abs(median - max);
     while (dif1 === dif2 || num1===num2 || num1===num3 || num2===num3) {
-      num1 = Math.floor(Math.random() * 12) + 1;
-      num2 = Math.floor(Math.random() * 12) + 1;
-      num3 = Math.floor(Math.random() * 12) + 1;
+      num1 = Math.floor(Math.random() * 25) + 1;
+      num2 = Math.floor(Math.random() * 25) + 1;
+      num3 = Math.floor(Math.random() * 25) + 1;
       min = Math.min(num1, num2, num3);
       max = Math.max(num1, num2, num3);
       median = num1 + num2 + num3 - min - max;

@@ -37,6 +37,7 @@ function App() {
         minHeight:"80vh"
       }}
     >
+      
       {game ? running : (
         <Box sx={{display:"flex", flexDirection:"column"}}>
           <Box sx={{fontSize:"2rem", marginBottom:"1rem"}}>Please select a game </Box>

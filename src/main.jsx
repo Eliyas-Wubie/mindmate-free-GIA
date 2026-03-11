@@ -8,7 +8,7 @@ createRoot(document.getElementById('root')).render(
   // <StrictMode>
   <>
     <ResponsiveAppBar/>
-    <App/>
+   
     </>
   // </StrictMode>,
 )

@@ -1,0 +1,21 @@
+.sidebartitle{
+    text-align: left;
+    padding-left: 7%;
+    margin: 0;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 600;
+}
+.logo{
+    height: 50px;
+}
+.logo2{
+    height: 50px;
+    width: 100px;
+    margin: 10px;
+}
+.logo:hover{
+    cursor: pointer;
+}
+.logo2:hover{
+    cursor: pointer;
+}

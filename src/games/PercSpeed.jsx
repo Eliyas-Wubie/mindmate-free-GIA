@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 const SpaceVis = ({ limit }) => {
-
   const [letterPairs, setLetterPairs] = useState([]);
   const [nonVaryCounter, setNonVaryCounter] = useState(0);
   const [timeTaken, setTimeTaken] = useState(0);
@@ -14,280 +14,222 @@ const SpaceVis = ({ limit }) => {
   const [accuracy, setAccuracy] = useState(0);
   const [numberOfCorrects, setNumberOfCorrects] = useState(0);
 
-  const capLetters = [
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-    "H",
-    "I",
-    "J",
-    "K",
-    "L",
-    "M",
-    "N",
-    "O",
-    "P",
-    "Q",
-    "R",
-    "S",
-    "T",
-    "U",
-    "V",
-    "W",
-    "X",
-    "Y",
-    "Z",
-  ];
-  const smallLetters = [
-    "a",
-    "b",
-    "c",
-    "d",
-    "e",
-    "f",
-    "g",
-    "h",
-    "i",
-    "j",
-    "k",
-    "l",
-    "m",
-    "n",
-    "o",
-    "p",
-    "q",
-    "r",
-    "s",
-    "t",
-    "u",
-    "v",
-    "w",
-    "x",
-    "y",
-    "z",
-  ];
+  const [openRulePopup, setOpenRulePopup] = useState(false);
+
+  const capLetters = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
+  const smallLetters = Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i));
   const vary = [true, false];
-  // select 4 small letters randomly
+
   function generateLetters() {
     setLetterPairs([]);
     setTimeTaken(Date.now());
-    const randomSmallLetters = smallLetters
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 4);
-    console.log(randomSmallLetters);
-    // iterate through the selected small letters
-    randomSmallLetters.map((item) => {
+    const randomSmallLetters = smallLetters.sort(() => Math.random() - 0.5).slice(0, 4);
+
+    randomSmallLetters.forEach((item) => {
       const randomVary = vary[Math.floor(Math.random() * vary.length)];
       if (randomVary) {
         setLetterPairs((prev) => {
-          let randomCap=item.toUpperCase()
+          let randomCap = item.toUpperCase();
           while (randomCap === item.toUpperCase()) {
-            console.log("🎌🎌🎌🎌",{randomCap,item})
             randomCap = capLetters[Math.floor(Math.random() * capLetters.length)];
-            console.log("✔✔✔✔",{randomCap,item})
-
           }
-          const newArray=[...prev, [item, randomCap]];
-          return newArray
+          return [...prev, [item, randomCap]];
         });
       } else {
         setLetterPairs((prev) => [...prev, [item, item.toUpperCase()]]);
-        console.log("adding to non varying count")
         setNonVaryCounter((prev) => prev + 1);
       }
     });
   }
-  function submitAnswer(answer) {
-    // setNonVaryCounter((original) => {
 
-    // return original
-    // });
-          setTimeTaken((prev) => {
+  function submitAnswer(answer) {
+    setTimeTaken((prev) => {
       const newValue = Date.now() - prev;
-      // template.time = newValue;
-      // new
       setLastSpeed(newValue);
-      setAverageSpeed((prev) => {
-        if (numberOfTrials >= 1) {
-          const newAverage =
-            (prev * (numberOfTrials - 1) + newValue) / numberOfTrials;
-          return newAverage;
-        } else {
-          return newValue;
-        }
-      });
-      // end new
+      setAverageSpeed((prev) =>
+        numberOfTrials >= 1 ? (prev * (numberOfTrials - 1) + newValue) / numberOfTrials : newValue
+      );
       return newValue;
     });
+
     if (answer === nonVaryCounter) {
-      console.log("correct", answer, nonVaryCounter);
       setNumberOfCorrects((prev) => {
         const newCorrect = prev + 1;
         setNumberOfTrials((prev) => {
           const newValue = prev + 1;
-          setAccuracy((p) => {
-            console.log("haaa", {newCorrect,newValue})
-            if (newValue >= 1) {
-              const newAccuracy = (newCorrect / newValue) * 100;
-              return newAccuracy;
-            } else {
-              return 0;
-            }
-          });
+          setAccuracy((_) => (newValue >= 1 ? (newCorrect / newValue) * 100 : 0));
           return newValue;
         });
         return newCorrect;
       });
       setGotIt("yes");
-      setNonVaryCounter(0);
-      generateLetters();
     } else {
-      console.log("incorrect", answer, nonVaryCounter);
       setNumberOfTrials((prev) => {
         const newValue = prev + 1;
-        setAccuracy((p) => {
-            console.log("haaa", {numberOfCorrects,numberOfTrials})
-
-          if (newValue >= 1) {
-            const newAccuracy = (numberOfCorrects / newValue) * 100;
-            return newAccuracy;
-          } else {
-            return 0;
-          }
-        });
+        setAccuracy((_) => (newValue >= 1 ? (numberOfCorrects / newValue) * 100 : 0));
         return newValue;
       });
       setGotIt("no");
-      setNonVaryCounter(0);
-      generateLetters();
     }
+
+    setNonVaryCounter(0);
+    generateLetters();
   }
 
   useEffect(() => {
     generateLetters();
   }, []);
+
+  const roundaverageSpeed = averageSpeed.toFixed(3);
+  const roundaccuracy = accuracy.toFixed(3);
+
   return (
-    <Box>
+    <Box sx={{ position: "relative", width: "100%",  }}>
+      {/* Question mark button */}
+      <Button
+  onClick={() => setOpenRulePopup(true)}
+  sx={{
+    position: "absolute",
+    top: { xs: 10, sm: 15 }, 
+    right: { xs: 10, sm: 15 }, 
+    fontSize: { xs: "16px", sm: "20px" },
+    
+    color: "white",
+    minWidth: { xs: "35px", sm: "40px" },
+    minHeight: { xs: "35px", sm: "40px" },
+    borderRadius: "50%",
+    "&:hover": { backgroundColor: "#0055cc" },
+  }}
+>
+  <HelpOutlineIcon />
+</Button>
+
+
+      {/* Rule Dialog */}
+      <Dialog open={openRulePopup} onClose={() => setOpenRulePopup(false)}>
+        <DialogTitle>Rule</DialogTitle>
+        <DialogContent>
+          <Typography paragraph>
+            Select the number that is the most different or stands out the most from the others.
+          </Typography>
+          <Typography paragraph>
+            Carefully compare each option and choose the one that is farthest in value or pattern.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenRulePopup(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Stats */}
       <Box
         sx={{
-          fontSize: "30px",
+          fontSize: { xs: "20px", sm: "26px", md: "30px" },
           color: "white",
           width: "100%",
-          backgroundColor: "#242424",
+          backgroundColor: "rgb(45, 145, 244)",
+          borderTopLeftRadius: "10px",
+          borderTopRightRadius: "10px",
+          
         }}
       >
-        Average Speed: {averageSpeed} Accuracy: {accuracy}%
+        <Box sx={{ marginLeft: { xs: "3%", sm: "5%" } }}>Average Speed: {roundaverageSpeed}</Box>
+        <Box sx={{ marginLeft: { xs: "3%", sm: "5%" } }}>Accuracy: {roundaccuracy}%</Box>
       </Box>
 
+      {/* Last speed */}
       <Box
         sx={{
-          fontSize: "40px",
+          fontSize: { xs: "24px", sm: "32px", md: "40px" },
           color: "white",
           width: "100%",
-          backgroundColor: "black",
+          backgroundColor: "rgb(71, 144, 216)",
+          marginBottom: { xs: "4%", sm: "6%", md: "6%" },
+          textAlign: "center",
         }}
       >
         {lastSpeed / 1000} sec
       </Box>
-      {gotIt ? (
-        gotIt === "yes" ? (
-          <Box
-            sx={{
-              fontSize: "40px",
-              color: "green",
-              width: "100%",
-              backgroundColor: "white",
-              marginBottom: "30px",
-            }}
-          >
-            ✔
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              fontSize: "40px",
-              color: "red",
-              width: "100%",
-              backgroundColor: "white",
-              marginBottom: "30px",
-            }}
-          >
-            ❌
-          </Box>
-        )
-      ) : (
-        ""
+
+      {/* Correct / incorrect */}
+      {gotIt && (
+        <Box
+          sx={{
+            fontSize: { xs: "24px", sm: "32px", md: "40px" },
+            color: gotIt === "yes" ? "green" : "red",
+            width: "100%",
+            backgroundColor: gotIt === "yes" ? "#89e0" : "white",
+            marginBottom: { xs: "8px", sm: "12px", md: "10px" },
+            textAlign: "center",
+          }}
+        >
+          {gotIt === "yes" ? "✔" : "❌"}
+        </Box>
       )}
-      {numberOfTrials <= limit ? <Box>
-              <Box
-        key="questions"
-        sx={{ display: "flex", flexDirection: "row", gap: 4, width: "100%" }}
-      >
-        {letterPairs.map((letterPair, index) => {
-          return (
+
+      {/* Letter pairs */}
+      {numberOfTrials <= limit && (
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(2, 1fr)", md: "repeat(4, 1fr)" },
+            gap: { xs: 2, sm: 3, md: 4 },
+            mb: 4,
+          }}
+        >
+          {letterPairs.map((letterPair, index) => (
             <Box
               key={index}
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                gap: 2,
-                width: "100%",
-                marginBottom: "20px",
+                gap: { xs: 1, sm: 2 },
+                alignItems: "center",
+                padding: { xs: "8px", sm: "10px", md: "0px" },
+                borderRadius: "8px",
+                backgroundColor: { xs: "#f0f0f0", sm: "#f9f9f9", md: "transparent" },
               }}
             >
-              <Typography sx={{ fontSize: "25px", color:"black" }}>{letterPair[0]}</Typography>
-              <Typography sx={{ fontSize: "25px", color:"black" }}>{letterPair[1]}</Typography>
+              <Typography sx={{ fontSize: { xs: "18px", sm: "22px", md: "25px" }, color: "black" }}>
+                {letterPair[0]}
+              </Typography>
+              <Typography sx={{ fontSize: { xs: "18px", sm: "22px", md: "25px" }, color: "black" }}>
+                {letterPair[1]}
+              </Typography>
             </Box>
-          );
-        })}
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 4,
-        }}
-      >
-        <Button
-          onClick={() => submitAnswer(0)}
-          sx={{ backgroundColor: "grey", color: "white", fontSize: "16px" }}
-        >
-          0
-        </Button>
-        <Button
-          onClick={() => submitAnswer(1)}
-          sx={{ backgroundColor: "grey", color: "white", fontSize: "16px" }}
-        >
-          1
-        </Button>
-        <Button
-          onClick={() => submitAnswer(2)}
-          sx={{ backgroundColor: "grey", color: "white", fontSize: "16px" }}
-        >
-          2
-        </Button>
-        <Button
-          onClick={() => submitAnswer(3)}
-          sx={{ backgroundColor: "grey", color: "white", fontSize: "16px" }}
-        >
-          3
-        </Button>
-        <Button
-          onClick={() => submitAnswer(4)}
-          sx={{ backgroundColor: "grey", color: "white", fontSize: "16px" }}
-        >
-          4
-        </Button>
-      </Box>
-      </Box>:""}
+          ))}
+        </Box>
+      )}
 
+      {/* Answer buttons */}
+      {numberOfTrials <= limit && (
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "repeat(2, 1fr)", sm: "repeat(2, 1fr)", md: "repeat(5, auto)" },
+            gap: { xs: 2, sm: 3, md: 4 },
+            justifyContent: "center",
+          }}
+        >
+          {[0, 1, 2, 3, 4].map((num) => (
+            <Button
+              key={num}
+              onClick={() => submitAnswer(num)}
+              sx={{
+                backgroundColor: "rgb(45, 145, 244)",
+                color: "white",
+                fontSize: { xs: "14px", sm: "16px" },
+                minWidth: { xs: "50px", sm: "70px" },
+                minHeight: { xs: "35px", sm: "45px" },
+              }}
+            >
+              {num}
+            </Button>
+          ))}
+        </Box>
+      )}
     </Box>
   );
 };
+
 export default SpaceVis;

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography, Dialog, DialogTitle, DialogContent, IconButton } from "@mui/material";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+
 const NumSpeed = ({ limit }) => {
   const [numbers, setNumbers] = useState([]);
   const [answer, setAnswer] = useState(null);
@@ -11,175 +13,189 @@ const NumSpeed = ({ limit }) => {
   const [averageSpeed, setAverageSpeed] = useState(0);
   const [accuracy, setAccuracy] = useState(0);
   const [numberOfCorrects, setNumberOfCorrects] = useState(0);
-  //generate 3 numbers between 1 and 99
+
+  const [openRule, setOpenRule] = useState(false);
+
   const generateNumbers = () => {
     let num1 = Math.floor(Math.random() * 25) + 1;
     let num2 = Math.floor(Math.random() * 25) + 1;
     let num3 = Math.floor(Math.random() * 25) + 1;
-    // get the min, max, and median of the numbers
+
     let min = Math.min(num1, num2, num3);
     let max = Math.max(num1, num2, num3);
     let median = num1 + num2 + num3 - min - max;
     let dif1 = Math.abs(median - min);
     let dif2 = Math.abs(median - max);
-    while (dif1 === dif2 || num1===num2 || num1===num3 || num2===num3) {
+
+    while (dif1 === dif2 || num1 === num2 || num1 === num3 || num2 === num3) {
       num1 = Math.floor(Math.random() * 25) + 1;
       num2 = Math.floor(Math.random() * 25) + 1;
       num3 = Math.floor(Math.random() * 25) + 1;
+
       min = Math.min(num1, num2, num3);
       max = Math.max(num1, num2, num3);
       median = num1 + num2 + num3 - min - max;
       dif1 = Math.abs(median - min);
       dif2 = Math.abs(median - max);
     }
-    setNumbers((prev) => [num1, num2, num3]);
-    if (dif1 > dif2) {
-      setAnswer(min);
-    } else {
-      setAnswer(max);
-    }
+
+    setNumbers([num1, num2, num3]);
+    setAnswer(dif1 > dif2 ? min : max);
     setTimeTaken(Date.now());
   };
+
   const submitAnswer = (ans) => {
     setTimeTaken((prev) => {
       const newValue = Date.now() - prev;
-      // template.time = newValue;
-      // new
       setLastSpeed(newValue);
-      setAverageSpeed((prev) => {
-        if (numberOfTrials >= 1) {
-          const newAverage =
-            (prev * (numberOfTrials - 1) + newValue) / numberOfTrials;
-          return newAverage;
-        } else {
-          return newValue;
-        }
-      });
-      // end new
+      setAverageSpeed((prev) =>
+        numberOfTrials >= 1
+          ? (prev * (numberOfTrials - 1) + newValue) / numberOfTrials
+          : newValue
+      );
       return newValue;
     });
+
     if (ans === answer) {
-      console.log("correct", ans, answer);
       setGotIt("yes");
       setNumberOfCorrects((prev) => {
         const newCorrect = prev + 1;
         setNumberOfTrials((prev) => {
           const newValue = prev + 1;
-          setAccuracy((p) => {
-            console.log("haaa", { newCorrect, newValue });
-            if (newValue >= 1) {
-              const newAccuracy = (newCorrect / newValue) * 100;
-              return newAccuracy;
-            } else {
-              return 0;
-            }
-          });
+          setAccuracy((_) => (newValue >= 1 ? (newCorrect / newValue) * 100 : 0));
           return newValue;
         });
         return newCorrect;
       });
-      generateNumbers();
     } else {
-      console.log("incorrect", ans, answer);
       setGotIt("no");
       setNumberOfTrials((prev) => {
         const newValue = prev + 1;
-        setAccuracy((p) => {
-          console.log("haaa", { numberOfCorrects, numberOfTrials });
-
-          if (newValue >= 1) {
-            const newAccuracy = (numberOfCorrects / newValue) * 100;
-            return newAccuracy;
-          } else {
-            return 0;
-          }
-        });
+        setAccuracy((_) =>
+          newValue >= 1 ? (numberOfCorrects / newValue) * 100 : 0
+        );
         return newValue;
       });
-      generateNumbers();
     }
+    generateNumbers();
   };
+
   useEffect(() => {
     generateNumbers();
   }, []);
+
+  const roundaverageSpeed = averageSpeed.toFixed(3);
+  const roundaccuracy = accuracy.toFixed(3);
+
   return (
-    <Box>
-      <Box
+    <Box sx={{ width: "100%",  position: "relative" }}>
+      {/* Question Mark Button */}
+      <IconButton
+        onClick={() => setOpenRule(true)}
         sx={{
-          fontSize: "30px",
+          position: "absolute",
+          top: 10,
+          right: 10,
+          backgroundColor: "rgb(45,145,244)",
           color: "white",
-          width: "100%",
-          backgroundColor: "#242424",
+          "&:hover": { backgroundColor: "rgb(35,125,224)" },
         }}
       >
-        Average Speed: {averageSpeed} Accuracy: {accuracy}%
-      </Box>
+        <HelpOutlineIcon />
+      </IconButton>
 
+      {/* Stats */}
       <Box
         sx={{
-          fontSize: "40px",
-          color: "white",
           width: "100%",
-          backgroundColor: "black",
+          backgroundColor: "rgb(45, 145, 244)",
+          color: "white",
+          borderTopLeftRadius: "10px",
+          borderTopRightRadius: "10px",
+        
+        }}
+      >
+        <Typography sx={{ fontSize: { xs: "14px", sm: "20px", md: "30px" } }}>
+          Average Speed: {roundaverageSpeed}
+        </Typography>
+        <Typography sx={{ fontSize: { xs: "14px", sm: "20px", md: "30px" } }}>
+          Accuracy: {roundaccuracy}%
+        </Typography>
+      </Box>
+
+      {/* Last speed */}
+      <Box
+        sx={{
+          width: "100%",
+          backgroundColor: "rgb(71, 144, 216)",
+          color: "white",
+    
+          mb: { xs: 6, sm: 8 },
+          fontSize: { xs: "18px", sm: "25px", md: "40px" },
+          textAlign: "center",
         }}
       >
         {lastSpeed / 1000} sec
       </Box>
-      {gotIt ? (
-        gotIt === "yes" ? (
-          <Box
-            sx={{
-              fontSize: "40px",
-              color: "green",
-              width: "100%",
-              backgroundColor: "white",
-              marginBottom: "30px",
-            }}
-          >
-            ✔
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              fontSize: "40px",
-              color: "red",
-              width: "100%",
-              backgroundColor: "white",
-              marginBottom: "30px",
-            }}
-          >
-            ❌
-          </Box>
-        )
-      ) : (
-        ""
-      )}
-      {numberOfTrials <= limit ? (
+
+      {/* Correct / Incorrect */}
+      {gotIt && (
         <Box
-          key="questions"
+          sx={{
+            fontSize: { xs: "20px", sm: "30px", md: "40px" },
+            color: gotIt === "yes" ? "green" : "red",
+            width: "100%",
+            textAlign: "center",
+            mb: { xs: 3, sm: 4 },
+          }}
+        >
+          {gotIt === "yes" ? "✔" : "❌"}
+        </Box>
+      )}
+
+      {/* Numbers */}
+      {numberOfTrials <= limit && (
+        <Box
           sx={{
             display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            gap: 4,
-            color: "white",
-            margin:"1rem"
+            flexWrap: "wrap",
+            justifyContent: "center",
+            gap: { xs: 1, sm: 2, md: 4 },
+            mb: { xs: 2, sm: 3 },
           }}
         >
           {numbers.map((num, index) => (
             <Button
               key={index}
               onClick={() => submitAnswer(num)}
-              sx={{ color: "white", fontSize:"1.5rem", background:"grey" }}
+              sx={{
+                backgroundColor: "rgb(45, 145, 244)",
+                color: "white",
+                fontSize: { xs: "16px", sm: "18px", md: "24px" },
+                minWidth: { xs: "50px", sm: "60px", md: "80px" },
+                minHeight: { xs: "35px", sm: "40px", md: "50px" },
+              }}
             >
               {num}
             </Button>
           ))}
         </Box>
-      ) : (
-        ""
       )}
+
+      {/* Rule Dialog */}
+      <Dialog open={openRule} onClose={() => setOpenRule(false)}>
+        <DialogTitle>Rule</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Select the number that is the most different or stands out the most from the others.
+          </Typography>
+          <Typography>
+            Carefully compare each option and choose the one that is farthest in value or pattern.
+          </Typography>
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };
+
 export default NumSpeed;

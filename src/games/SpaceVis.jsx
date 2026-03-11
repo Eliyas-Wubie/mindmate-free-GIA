@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import LinearProgress from "@mui/material/LinearProgress";
+import Typography from "@mui/material/Typography";
 import vis from "../data/vis.json";
-import { use } from "react";
+
 const SpaceVis = ({ limit }) => {
   const [selectedIndices, setSelectedIndices] = useState([]);
   const [playing, setPlaying] = useState(false);
@@ -9,33 +12,23 @@ const SpaceVis = ({ limit }) => {
   const [imagePairs, setImagePairs] = useState([]);
   const [timeTaken, setTimeTaken] = useState(0);
   const [answerCollection, setAnswerCollection] = useState([]);
-
   const [numberOfTrials, setNumberOfTrials] = useState(0);
   const [averageSpeed, setAverageSpeed] = useState(0);
   const [accuracy, setAccuracy] = useState(0);
   const [numberOfCorrects, setNumberOfCorrects] = useState(0);
 
-  //new
   const [gotIt, setGotIt] = useState(null);
   const [lastSpeed, setLastSpeed] = useState(null);
-  //end new
-  const Images = [
-    // "/pics/F.png",
-    // "/pics/G.png",
-    // "/pics/J.png",
-    // "/pics/P.png",
-    // "/pics/Q.png",
-    "/pics/R.png",
-    // "/pics/S.png",
-  ];
+
+  const [openRulePopup, setOpenRulePopup] = useState(false);
+  const Images = ["/pics/R.png"];
 
   function transformImage(image) {
     const degrees = [0, 90, 180, 270];
     const randomIndex = Math.floor(Math.random() * degrees.length);
     const randomDegree = degrees[randomIndex];
     const flipOptions = [true, false];
-    const randomFlip =
-      flipOptions[Math.floor(Math.random() * flipOptions.length)];
+    const randomFlip = flipOptions[Math.floor(Math.random() * flipOptions.length)];
     return {
       flipped: randomFlip,
       image: (
@@ -44,10 +37,9 @@ const SpaceVis = ({ limit }) => {
             src={image}
             alt="Rotated example"
             style={{
-              transform: `rotate(${randomDegree}deg) ${
-                randomFlip ? "scaleX(-1)" : ""
-              }`,
-              width: "100px",
+              transform: `rotate(${randomDegree}deg) ${randomFlip ? "scaleX(-1)" : ""}`,
+              width: "100%",
+              maxWidth: "100px",
               height: "auto",
             }}
           />
@@ -58,7 +50,6 @@ const SpaceVis = ({ limit }) => {
 
   function submitAnswer(answer) {
     setUnmatchedCounter((prevUnmatched) => {
-      console.log("ℹℹ", prevUnmatched);
       const isCorrect = answer === 2 - prevUnmatched;
       const template = {
         answer,
@@ -71,36 +62,24 @@ const SpaceVis = ({ limit }) => {
       setTimeTaken((prev) => {
         const newValue = Date.now() - prev;
         template.time = newValue;
-        // new
         setLastSpeed(newValue);
         setAverageSpeed((prev) => {
           if (numberOfTrials >= 1) {
-            const newAverage =
-              (prev * (numberOfTrials - 1) + newValue) / numberOfTrials;
-            return newAverage;
+            return (prev * (numberOfTrials - 1) + newValue) / numberOfTrials;
           } else {
             return newValue;
           }
         });
-        // end new
         return newValue;
       });
-      //new
+
       if (isCorrect) {
         setGotIt("yes");
         setNumberOfCorrects((prev) => {
           const newCorrect = prev + 1;
           setNumberOfTrials((prev) => {
             const newValue = prev + 1;
-            setAccuracy((p) => {
-              console.log("haaa", { newCorrect, newValue });
-              if (newValue >= 1) {
-                const newAccuracy = (newCorrect / newValue) * 100;
-                return newAccuracy;
-              } else {
-                return 0;
-              }
-            });
+            setAccuracy((p) => (newValue >= 1 ? (newCorrect / newValue) * 100 : 0));
             return newValue;
           });
           return newCorrect;
@@ -109,77 +88,54 @@ const SpaceVis = ({ limit }) => {
         setGotIt("no");
         setNumberOfTrials((prev) => {
           const newValue = prev + 1;
-          setAccuracy((p) => {
-            console.log("haaa", { numberOfCorrects, numberOfTrials });
-
-            if (newValue >= 1) {
-              const newAccuracy = (numberOfCorrects / newValue) * 100;
-              return newAccuracy;
-            } else {
-              return 0;
-            }
-          });
+          setAccuracy((p) => (newValue >= 1 ? (numberOfCorrects / newValue) * 100 : 0));
           return newValue;
         });
       }
-      // end new
-      console.log(isCorrect ? "correct" : "incorrect", template);
+
       setAnswerCollection((prev) => [...prev, template]);
-      return 0; // if you don't want to change it here
+      return 0;
     });
     handleStartPlaying();
   }
 
   function handleStartPlaying() {
-    // select 3 distinct numbers from 0 to length of images
     setTimeTaken(Date.now());
     const randomIndices = [];
     while (randomIndices.length < 2) {
-        if (Images.length >1){
-            const randomIndex = Math.floor(Math.random() * Images.length);
-            if (!randomIndices.includes(randomIndex)) {
-              randomIndices.push(randomIndex);
-            }
-        }
-        else{
-              randomIndices.push(0);
-        }
+      if (Images.length > 1) {
+        const randomIndex = Math.floor(Math.random() * Images.length);
+        if (!randomIndices.includes(randomIndex)) randomIndices.push(randomIndex);
+      } else {
+        randomIndices.push(0);
+      }
     }
-    setSelectedIndices((prev) => randomIndices);
-    //import each image and rotate them
+    setSelectedIndices(randomIndices);
+
     const tempImagePairs = [];
     for (const index of randomIndices) {
-      console.log(randomIndices);
       const transformationResult1 = transformImage(Images[index]);
       const transformationResult2 = transformImage(Images[index]);
-      const rotatedImage1 = transformationResult1.image;
-      const rotatedImage2 = transformationResult2.image;
       const flipped1 = transformationResult1.flipped;
       const flipped2 = transformationResult2.flipped;
-      console.log(flipped1, flipped2);
       if (flipped1 || flipped2) {
         if (flipped1 !== flipped2) {
-          setUnmatchedCounter((prev) => {
-            console.log("adding one to flipped", prev + 1);
-            const newValue = prev + 1;
-            return newValue;
-          });
+          setUnmatchedCounter((prev) => prev + 1);
         }
       }
-      tempImagePairs.push([rotatedImage1, rotatedImage2]);
+      tempImagePairs.push([transformationResult1.image, transformationResult2.image]);
     }
     setImagePairs(tempImagePairs);
     setPlaying(true);
-    console.log(unmatchedCounter);
   }
-  
+
   useEffect(() => {
     handleStartPlaying();
   }, []);
 
-  useEffect(() => {
-    console.log("unmatched counter changed", unmatchedCounter);
-  }, [unmatchedCounter]);
+  const roundaverageSpeed = averageSpeed.toFixed(3);
+  const roundaccuracy = accuracy.toFixed(3);
+
   return (
     <Box
       sx={{
@@ -188,113 +144,174 @@ const SpaceVis = ({ limit }) => {
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
+        position: "relative",
+        
       }}
     >
-      {/* new */}
+      {/* Responsive question mark button */}
+      <Button
+  onClick={() => setOpenRulePopup(true)}
+  sx={{
+    position: "absolute",
+    top: { xs: 10, sm: 15 }, 
+    right: { xs: 10, sm: 15 }, 
+    fontSize: { xs: "16px", sm: "20px" },
+    
+    color: "white",
+    minWidth: { xs: "35px", sm: "40px" },
+    minHeight: { xs: "35px", sm: "40px" },
+    borderRadius: "50%",
+    "&:hover": { backgroundColor: "#0055cc" },
+  }}
+>
+  <HelpOutlineIcon />
+</Button>
+
+      <Dialog open={openRulePopup} onClose={() => setOpenRulePopup(false)}>
+        <DialogTitle>Game Rules</DialogTitle>
+        <DialogContent>
+          <p>
+            1. Two images are shown per trial.<br />
+            2. Click the number of unmatched images (0, 1, or 2).<br />
+            3. Your accuracy and average speed are calculated automatically.<br />
+            4. The game continues until you reach the trial limit.
+          </p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenRulePopup(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Stats */}
       <Box
         sx={{
-          fontSize: "30px",
+          fontSize: { xs: "18px", sm: "30px" },
           color: "white",
           width: "100%",
-          backgroundColor: "#242424",
+          backgroundColor: "rgb(45, 145, 244)",
+          borderTopLeftRadius: "10px",
+          borderTopRightRadius: "10px",
         }}
       >
-        Average Speed: {averageSpeed} Accuracy: {accuracy}%
+        <Box sx={{ marginLeft: { xs: "3%", sm: "5%" } }}>
+          Average Speed: {roundaverageSpeed}
+        </Box>
+        <Box sx={{ marginLeft: { xs: "3%", sm: "5%" } }}>Accuracy: {roundaccuracy}%</Box>
       </Box>
+
       <Box
         sx={{
-          fontSize: "40px",
+          fontSize: { xs: "24px", sm: "40px" },
           color: "white",
           width: "100%",
-          backgroundColor: "black",
+          backgroundColor: "rgb(71, 144, 216)",
+          marginBottom:"10px",
+          textAlign: "center",
         }}
       >
         {lastSpeed / 1000} sec
       </Box>
+      <Box sx={{ width: "90%", mt: 2 }}>
+  <LinearProgress
+    variant="determinate"
+    value={(numberOfTrials / limit) * 100}
+    sx={{
+      height: 10,
+      borderRadius: 5
+    }}
+  />
+
+  <Typography sx={{ mt: 1, textAlign: "center", fontSize: "14px" }}>
+    {numberOfTrials} / {limit} trials completed
+  </Typography>
+</Box>
+
+      {/* Correct / incorrect */}
       {gotIt ? (
-        gotIt === "yes"  ? (
-          <Box
-            sx={{
-              fontSize: "40px",
-              color: "green",
-              width: "100%",
-              backgroundColor: "white",
-              marginBottom: "30px",
-            }}
-          >
-            ✔
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              fontSize: "40px",
-              color: "red",
-              width: "100%",
-              backgroundColor: "white",
-              marginBottom: "30px",
-            }}
-          >
-            ❌
-          </Box>
-        )
-      ) : (
-        ""
-      )}
-      {/* end new */}
-      {numberOfTrials <= limit ? <Box>
-              <Box
-        key="questions"
-        sx={{ display: "flex", flexDirection: "row", gap: 4 }}
-      >
-        {imagePairs.map((imagePair, index) => {
-          console.log("🎶🎶🎶🎶", imagePair);
-          return (
+        <Box
+          sx={{
+            fontSize: { xs: "24px", sm: "40px" },
+            color: gotIt === "yes" ? "green" : "red",
+            width: "100%",
+            backgroundColor: "white",
+            marginBottom: { xs: "15px", sm: "30px" },
+            textAlign: "center",
+          }}
+        >
+          {gotIt === "yes" ? "✔" : "❌"}
+        </Box>
+      ) : (<Box
+          sx={{
+            fontSize: { xs: "24px", sm: "40px" },
+            color: gotIt === "yes" ? "green" : "red",
+            width: "100%",
+            backgroundColor: "white",
+            marginBottom: { xs: "15px", sm: "30px" },
+            textAlign: "center",
+          }}
+        >
+          {"💖"}
+        </Box>)}
+
+      {/* Images */}
+      {numberOfTrials <= limit-1 && (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: { xs: 2, sm: 4 },
+            width: "100%",
+            alignItems: "center",
+          }}
+        >
+          {imagePairs.map((imagePair, index) => (
             <Box
               key={index}
-              sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                gap: { xs: 2, sm: 4 },
+                width: "100%",
+                justifyContent: "center",
+              }}
             >
               {imagePair[0]}
               {imagePair[1]}
             </Box>
-          );
-        })}
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 4,
-        }}
-      >
-        <Button
-          onClick={() => submitAnswer(0)}
-          sx={{ backgroundColor: "grey", color: "white", fontSize: "16px" }}
-        >
-          0
-        </Button>
-        <Button
-          onClick={() => submitAnswer(1)}
-          sx={{ backgroundColor: "grey", color: "white", fontSize: "16px" }}
-        >
-          1
-        </Button>
-        <Button
-          onClick={() => submitAnswer(2)}
-          sx={{ backgroundColor: "grey", color: "white", fontSize: "16px" }}
-        >
-          2
-        </Button>
-        {/* <Button
-          onClick={() => submitAnswer(3)}
-          sx={{ backgroundColor: "grey", color: "white", fontSize: "16px" }}
-        >
-          3
-        </Button> */}
-      </Box>
-      </Box>:""}
+          ))}
 
+          {/* Answer buttons */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              alignItems: "center",
+              gap: { xs: 1, sm: 4 },
+              justifyContent: "center",
+              mt: 2,
+            }}
+          >
+            {[0, 1, 2].map((num) => (
+              <Button
+                key={num}
+                onClick={() => submitAnswer(num)}
+                sx={{
+                  backgroundColor: "rgb(45, 145, 244)",
+                  color: "white",
+                  fontSize: { xs: "14px", sm: "16px" },
+                  minWidth: { xs: "60px", sm: "80px" },
+                  minHeight: { xs: "40px", sm: "50px" },
+                }}
+              >
+                {num}
+              </Button>
+            ))}
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 };
+
 export default SpaceVis;

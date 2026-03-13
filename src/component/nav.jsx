@@ -267,7 +267,7 @@ export default function Navbar() {
               boxShadow: "0 14px 30px rgba(0,0,0,0.12)",
             },
           }}
-        >
+        >  <Toolbar />
           {drawerContent}
         </Drawer>
 

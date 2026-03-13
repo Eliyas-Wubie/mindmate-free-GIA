@@ -29,18 +29,20 @@ const SpaceVis = ({ limit }) => {
 
   const capLetters = useMemo(
     () => Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)),
-    []
+    [],
   );
 
   const smallLetters = useMemo(
     () => Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i)),
-    []
+    [],
   );
 
   const vary = [true, false];
 
   function generateLetters() {
-    const shuffled = [...smallLetters].sort(() => Math.random() - 0.5).slice(0, 4);
+    const shuffled = [...smallLetters]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 4);
 
     const newPairs = [];
     let newNonVaryCount = 0;
@@ -74,7 +76,9 @@ const SpaceVis = ({ limit }) => {
     const nextCorrects = isCorrect ? numberOfCorrects + 1 : numberOfCorrects;
 
     setAverageSpeed((prev) =>
-      numberOfTrials >= 1 ? (prev * numberOfTrials + newValue) / nextTrials : newValue
+      numberOfTrials >= 1
+        ? (prev * numberOfTrials + newValue) / nextTrials
+        : newValue,
     );
 
     setNumberOfCorrects(nextCorrects);
@@ -111,22 +115,25 @@ const SpaceVis = ({ limit }) => {
         overflow: "hidden",
         background:
           "linear-gradient(180deg, rgba(255,255,255,0.72) 10%, rgb(255, 255, 255) 100%)",
-        
+
         boxShadow: "0 18px 40px rgba(75, 100, 155, 0.14)",
       }}
     >
       <Dialog open={openRulePopup} onClose={() => setOpenRulePopup(false)}>
-        <DialogTitle>Rule</DialogTitle>
+        <DialogTitle>Game Rules (How to Play)</DialogTitle>
         <DialogContent>
           <Typography paragraph>
-            Count how many letter pairs match in identity, meaning the lowercase
-            letter corresponds to the same uppercase letter.
+            The screen shows four pairs of letters. Each pair may contain: the
+            same letter in uppercase/lowercase form different letters The player
+            must count how many pairs match. A match means both letters
+            represent the same alphabet letter, regardless of case.
           </Typography>
           <Typography paragraph>
-            Example: <strong>r + R</strong> is a match, but <strong>r + P</strong> is not.
-          </Typography>
-          <Typography paragraph>
-            Choose the number that equals the total count of matching pairs.
+            What It Measures This test measures Perceptual Speed, including:
+            Visual scanning speed Ability to detect small differences quickly
+            Pattern recognition Sustained visual attention This ability is
+            important for tasks such as: Data inspection Monitoring systems
+            Quality control Rapid information processing
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -251,7 +258,6 @@ const SpaceVis = ({ limit }) => {
             py: { xs: 0.8, sm: 1, md: 1.2 },
             background:
               "linear-gradient(180deg, rgba(249,250,255,0.98) 0%, rgba(241,245,252,0.98) 100%)",
-            
           }}
         >
           <LinearProgress
@@ -297,8 +303,9 @@ const SpaceVis = ({ limit }) => {
             flex: 1,
             minHeight: 0,
             borderRadius: "22px",
-            background: "linear-gradient(180deg, rgb(249, 250, 255) 0%, rgb(255, 255, 255) 100%)",
-            
+            background:
+              "linear-gradient(180deg, rgb(249, 250, 255) 0%, rgb(255, 255, 255) 100%)",
+
             boxShadow: "0 12px 26px rgba(95,115,155,0.12)",
             p: { xs: 0.6, sm: 0.9, md: 1.2 },
             display: "flex",
@@ -461,7 +468,8 @@ const SpaceVis = ({ limit }) => {
                         fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
                       }}
                     >
-                      Accuracy: {roundAccuracy}% • Average Speed: {roundAverageSpeed} sec
+                      Accuracy: {roundAccuracy}% • Average Speed:{" "}
+                      {roundAverageSpeed} sec
                     </Typography>
                   </Box>
                 )}

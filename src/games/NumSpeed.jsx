@@ -104,14 +104,31 @@ const NumSpeed = ({ limit }) => {
       }}
     >
       <Dialog open={openRule} onClose={() => setOpenRule(false)}>
-        <DialogTitle>Rule</DialogTitle>
+        <DialogTitle> Game Rules (How to Play)</DialogTitle>
         <DialogContent>
           <Typography paragraph>
-            Select the number that stands out the most from the other two.
+              The player is presented with three numbers.
+
+              Two of the numbers are close to each other, while one number is further away.
+
+              The task is to identify which number is the furthest from the other two.
+
+              The player selects the outlier number.
           </Typography>
           <Typography paragraph>
-            Compare the spacing between the three numbers and choose the one that
-            is farthest away from the others.
+            What It Measures -
+
+            This test measures Numerical Processing Speed and Accuracy, including:
+
+            Quick numerical comparison
+
+            Quantitative reasoning
+
+            Ability to detect numerical outliers
+
+            Mental calculation speed
+
+            It reflects how efficiently a person can process numeric information under time pressure.
           </Typography>
         </DialogContent>
         <DialogActions>

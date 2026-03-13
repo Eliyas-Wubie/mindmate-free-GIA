@@ -52,17 +52,17 @@ export default function Navbar() {
   const menuItems = useMemo(
     () => [
       {
-        text: "Spatial Visualization",
+        text: "Spatial Visualisation",
         id: "vis",
         icon: <PsychologyAltRoundedIcon fontSize="small" />,
       },
       {
-        text: "Percentage Speed",
+        text: "Perceptual Speed",
         id: "perc",
         icon: <InsightsRoundedIcon fontSize="small" />,
       },
       {
-        text: "Number Speed",
+        text: "Number Speed & Accuracy",
         id: "num",
         icon: <NumbersRoundedIcon fontSize="small" />,
       },
@@ -100,7 +100,7 @@ export default function Navbar() {
             mb: 2.5,
           }}
         >
-          Game list
+          GIA Game list
         </Typography>
 
         <List sx={{ p: 0 }}>

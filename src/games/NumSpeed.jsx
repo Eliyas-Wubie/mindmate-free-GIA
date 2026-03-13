@@ -200,7 +200,7 @@ const NumSpeed = ({ limit }) => {
                 opacity: 0.85,
               }}
             >
-              <TrackChangesRoundedIcon sx={{ fontSize: 48 }} />
+              
             </Box>
           </Box>
         </Box>
@@ -242,7 +242,7 @@ const NumSpeed = ({ limit }) => {
             sx={{
               height: { xs: 8, sm: 10, md: 12 },
               borderRadius: 999,
-              backgroundColor: "rgba(123, 182, 242, 0.30)",
+              backgroundColor: "rgba(77, 79, 81, 0.3)",
               "& .MuiLinearProgress-bar": {
                 borderRadius: 999,
                 background: "linear-gradient(90deg, #21c173 0%, #05b10b 100%)",
@@ -268,7 +268,7 @@ const NumSpeed = ({ limit }) => {
         sx={{
           flex: 1,
           minHeight: 0,
-          p: { xs: 1, sm: 1.5, md: 2 },
+          p: { xs: 1, sm: 1.5, md: 1.5 },
           display: "flex",
           background:
             "linear-gradient(180deg, rgba(249,250,255,0.98) 0%, rgba(241,245,252,0.98) 100%)",
@@ -350,8 +350,8 @@ const NumSpeed = ({ limit }) => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  px: { xs: 1, sm: 2, md: 3 },
-                  py: { xs: 1.5, sm: 2, md: 3 },
+                  px: { xs: 1, sm: 2, md: 2 },
+                  py: { xs: 1.5, sm: 2, md: 2 },
                   background:
                     "linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(243,246,252,0.95) 100%)",
                 }}
@@ -373,16 +373,16 @@ const NumSpeed = ({ limit }) => {
                         onClick={() => submitAnswer(num)}
                         sx={{
                           minWidth: { xs: 70, sm: 90, md: 120 },
-                          width: { xs: "22vw", sm: "18vw", md: 120 },
-                          maxWidth: 120,
-                          aspectRatio: "1 / 1",
+                          width: { xs: "22vw", sm: "18vw", md: 130 },
+                          maxWidth: 110,
+                          aspectRatio: "1 / 0.5",
                           borderRadius: "16px",
                           background:
                             "linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(245,248,253,0.96) 100%)",
                           border: "3px solid #FF5B5B",
                           boxShadow: "0 8px 18px rgba(100,110,140,0.16)",
                           color: "#111827",
-                          fontSize: { xs: "1.6rem", sm: "2rem", md: "2.8rem" },
+                          fontSize: { xs: "1.6rem", sm: "2rem", md: "2.4rem" },
                           fontWeight: 500,
                           "&:hover": {
                             background:

@@ -218,7 +218,7 @@ const SpaceVis = ({ limit }) => {
                 opacity: 0.85,
               }}
             >
-              <TrackChangesRoundedIcon sx={{ fontSize: 38 }} />
+              
             </Box>
           </Box>
         </Box>
@@ -260,7 +260,7 @@ const SpaceVis = ({ limit }) => {
             sx={{
               height: { xs: 6, sm: 8, md: 10 },
               borderRadius: 999,
-              backgroundColor: "rgba(123, 182, 242, 0.30)",
+              backgroundColor: "rgba(97, 100, 103, 0.3)",
               "& .MuiLinearProgress-bar": {
                 borderRadius: 999,
                 background: "linear-gradient(90deg, #67ff95 0%, #05b10b 100%)",

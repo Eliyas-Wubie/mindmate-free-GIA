@@ -46,7 +46,7 @@ const SpaceVis = ({ limit }) => {
             aspectRatio: "1 / 1",
             borderRadius: "10px",
             backgroundColor: "rgba(255,255,255,0.98)",
-           
+
             boxShadow: "0 8px 18px rgba(100,110,140,0.16)",
             display: "flex",
             alignItems: "center",
@@ -91,7 +91,9 @@ const SpaceVis = ({ limit }) => {
 
     setLastSpeed(newTime);
     setAverageSpeed((prev) =>
-      numberOfTrials > 0 ? (prev * numberOfTrials + newTime) / nextTrials : newTime
+      numberOfTrials > 0
+        ? (prev * numberOfTrials + newTime) / nextTrials
+        : newTime,
     );
     setNumberOfCorrects(nextCorrects);
     setNumberOfTrials(nextTrials);
@@ -114,7 +116,8 @@ const SpaceVis = ({ limit }) => {
     while (randomIndices.length < 2) {
       if (Images.length > 1) {
         const randomIndex = Math.floor(Math.random() * Images.length);
-        if (!randomIndices.includes(randomIndex)) randomIndices.push(randomIndex);
+        if (!randomIndices.includes(randomIndex))
+          randomIndices.push(randomIndex);
       } else {
         randomIndices.push(0);
       }
@@ -168,21 +171,30 @@ const SpaceVis = ({ limit }) => {
         overflow: "hidden",
         background:
           "linear-gradient(180deg, rgba(255,255,255,0.72) 0%, rgba(235,243,255,0.94) 100%)",
-       
+
         boxShadow: "0 18px 40px rgba(75, 100, 155, 0.14)",
       }}
     >
       <Dialog open={openRulePopup} onClose={() => setOpenRulePopup(false)}>
-        <DialogTitle>Game Rules</DialogTitle>
+        <DialogTitle>Game Rules (How to Play)</DialogTitle>
         <DialogContent>
           <Typography paragraph>
-            Two rows are shown per trial, each containing two transformed images.
+            A target letter is shown. Two additional letters are displayed
+            beside or below it. Each of the two letters may be: the same letter
+            rotated, or a flipped / mirrored version, which does not count as a
+            match. The player must decide how many of the two letters truly
+            match the target. The response options are: 0 = neither matches 1 =
+            only one matches 2 = both match The player must answer as quickly
+            and accurately as possible.
           </Typography>
           <Typography paragraph>
-            Count how many rows are unmatched and choose the correct answer: 0, 1, or 2.
-          </Typography>
-          <Typography paragraph>
-            Your accuracy and average speed are updated automatically after each trial.
+            What It Measures This test measures: Mental rotation Spatial
+            reasoning Ability to distinguish true rotation from mirror flipping
+            Speed of visual-spatial judgment How It Measures Performance It is
+            measured through: Average speed: how long the player takes per
+            question Accuracy: how often the player correctly identifies whether
+            0, 1, or 2 letters match Correct answers per minute: overall spatial
+            processing efficiency
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -273,9 +285,7 @@ const SpaceVis = ({ limit }) => {
                 alignItems: "center",
                 opacity: 0.85,
               }}
-            >
-              
-            </Box>
+            ></Box>
           </Box>
         </Box>
 
@@ -307,7 +317,6 @@ const SpaceVis = ({ limit }) => {
             py: { xs: 0.7, sm: 0.9 },
             background:
               "linear-gradient(180deg, rgba(249,250,255,0.98) 0%, rgba(241,245,252,0.98) 100%)",
-            
           }}
         >
           <LinearProgress
@@ -345,7 +354,7 @@ const SpaceVis = ({ limit }) => {
           p: { xs: 0.5, sm: 0.75, md: 1 },
           display: "flex",
           background:
-           "linear-gradient(180deg, rgba(249,250,255,0.98) 0%, rgba(241,245,252,0.98) 100%)",
+            "linear-gradient(180deg, rgba(249,250,255,0.98) 0%, rgba(241,245,252,0.98) 100%)",
         }}
       >
         <Box
@@ -353,9 +362,9 @@ const SpaceVis = ({ limit }) => {
             flex: 1,
             minHeight: 0,
             borderRadius: "20px",
-            background: "linear-gradient(180deg, rgba(249,250,255,0.98) 0%, rgba(241,245,252,0.98) 100%)",
-            
-            
+            background:
+              "linear-gradient(180deg, rgba(249,250,255,0.98) 0%, rgba(241,245,252,0.98) 100%)",
+
             p: { xs: 0.5, sm: 0.75, md: 1 },
             display: "flex",
             flexDirection: "column",
@@ -448,10 +457,7 @@ const SpaceVis = ({ limit }) => {
                       }}
                     >
                       {imagePairs.map((imagePair, index) => (
-                        <Box
-                          key={index}
-                          sx={{ display: "contents" }}
-                        >
+                        <Box key={index} sx={{ display: "contents" }}>
                           {imagePair[0]}
                           {imagePair[1]}
                         </Box>
@@ -476,7 +482,8 @@ const SpaceVis = ({ limit }) => {
                         fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
                       }}
                     >
-                      Accuracy: {roundaccuracy}% • Average Speed: {roundaverageSpeed} sec
+                      Accuracy: {roundaccuracy}% • Average Speed:{" "}
+                      {roundaverageSpeed} sec
                     </Typography>
                   </Box>
                 )}

@@ -24,7 +24,7 @@ const drawerWidth = 300;
 export default function Navbar() {
   const [game, setGame] = useState(null);
   const [running, setRunning] = useState(null);
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(10);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   function handleOnChange(e) {

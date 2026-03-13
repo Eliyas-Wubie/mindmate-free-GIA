@@ -138,7 +138,7 @@ const NumSpeed = ({ limit }) => {
             pt: { xs: 1.5, sm: 2, md: 2.5 },
             pb: { xs: 1, sm: 1.5, md: 2 },
             borderTopLeftRadius:"32px",
-            borderTopRightRadius:"32px"
+            borderTopRightRadius:"px"
           }}
         >
           <Button

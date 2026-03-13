@@ -302,6 +302,10 @@ export default function Navbar() {
                   textAlign: "center",
                   width: "100%",
                   maxWidth: 780,
+                  display:"flex",
+                  justifyContent:"center",
+                  alignContent:"center",
+                  flexDirection:"column",
                 }}
               >
                 <Typography
@@ -327,18 +331,42 @@ export default function Navbar() {
                 </Typography>
 
                 <Box
-                  component="img"
-                  src="pics/Logical Reasoning Preparation Book_ 100 IQ Questions Available at AMAZON.png"
+                  
                   sx={{
                     mt: 1,
                     width: "100%",
-                    maxWidth: 380,
+                    maxWidth: 480,
+                    padding:"20px",
                     height: "auto",
                     borderRadius: "24px",
                     boxShadow: "0 12px 30px rgba(55,90,160,0.16)",
                     border: "1px solid rgba(140,170,240,0.18)",
+                    display:"flex",
+                    flexDirection:"column",
+                    gap:10, 
+                    alignSelf:"center"                   
                   }}
-                />
+                >   <Box sx={{display:"flex", flexDirection:"column", justifyContent:"center" ,alignItems:"center"}}  
+                onClick={() => {
+                  setGame("vis");
+                  setMobileOpen(false);
+                }}><PsychologyAltRoundedIcon fontSize="large" /> Spatial Visualisation</Box>
+                <Box sx={{display:"flex",justifyContent:"space-around"}}>
+                  <Box sx={{display:"flex", flexDirection:"column", justifyContent:"center" ,alignItems:"center"}}
+                  onClick={() => {
+                  setGame("perc");
+                  setMobileOpen(false);
+                }}
+                  ><InsightsRoundedIcon fontSize="large" /> Perceptual Speed</Box>
+                  <Box sx={{display:"flex", flexDirection:"column", justifyContent:"center" ,alignItems:"center"}}
+                  onClick={() => {
+                  setGame("num");
+                  setMobileOpen(false);
+                }}
+                  ><NumbersRoundedIcon fontSize="large" /> Number Speed & Accuracy</Box>
+                </Box>
+                
+                </Box>
               </Box>
             )}
           </Box>

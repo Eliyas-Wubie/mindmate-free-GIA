@@ -316,7 +316,7 @@ export default function Navbar() {
                     mb: 1,
                   }}
                 >
-                  Select a test
+                  Select a Game
                 </Typography>
 
                 <Typography

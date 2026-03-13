@@ -1,6 +1,17 @@
 import { useState, useEffect } from "react";
-import { Box, Button, Typography, Dialog, DialogTitle, DialogContent, IconButton } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  LinearProgress,
+} from "@mui/material";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import SpeedRoundedIcon from "@mui/icons-material/SpeedRounded";
+import TrackChangesRoundedIcon from "@mui/icons-material/TrackChangesRounded";
 
 const NumSpeed = ({ limit }) => {
   const [numbers, setNumbers] = useState([]);
@@ -42,158 +53,399 @@ const NumSpeed = ({ limit }) => {
     setNumbers([num1, num2, num3]);
     setAnswer(dif1 > dif2 ? min : max);
     setTimeTaken(Date.now());
+    
   };
 
   const submitAnswer = (ans) => {
-    setTimeTaken((prev) => {
-      const newValue = Date.now() - prev;
-      setLastSpeed(newValue);
-      setAverageSpeed((prev) =>
-        numberOfTrials >= 1
-          ? (prev * (numberOfTrials - 1) + newValue) / numberOfTrials
-          : newValue
-      );
-      return newValue;
-    });
+    const newTime = Date.now() - timeTaken;
+    const isCorrect = ans === answer;
+    const nextTrials = numberOfTrials + 1;
+    const nextCorrects = isCorrect ? numberOfCorrects + 1 : numberOfCorrects;
 
-    if (ans === answer) {
-      setGotIt("yes");
-      setNumberOfCorrects((prev) => {
-        const newCorrect = prev + 1;
-        setNumberOfTrials((prev) => {
-          const newValue = prev + 1;
-          setAccuracy((_) => (newValue >= 1 ? (newCorrect / newValue) * 100 : 0));
-          return newValue;
-        });
-        return newCorrect;
-      });
-    } else {
-      setGotIt("no");
-      setNumberOfTrials((prev) => {
-        const newValue = prev + 1;
-        setAccuracy((_) =>
-          newValue >= 1 ? (numberOfCorrects / newValue) * 100 : 0
-        );
-        return newValue;
-      });
+    setLastSpeed(newTime);
+    setAverageSpeed((prev) =>
+      numberOfTrials > 0 ? (prev * numberOfTrials + newTime) / nextTrials : newTime
+    );
+    setNumberOfCorrects(nextCorrects);
+    setNumberOfTrials(nextTrials);
+    setAccuracy(nextTrials > 0 ? (nextCorrects / nextTrials) * 100 : 0);
+    setGotIt(isCorrect ? "yes" : "no");
+
+    if (nextTrials < limit) {
+      setTimeout(() => {
+        generateNumbers();
+      }, 250);
     }
-    generateNumbers();
   };
 
   useEffect(() => {
     generateNumbers();
   }, []);
 
-  const roundaverageSpeed = averageSpeed.toFixed(3);
+  const roundaverageSpeed = (averageSpeed / 1000).toFixed(3);
   const roundaccuracy = accuracy.toFixed(3);
+  const currentTimer = lastSpeed !== null ? (lastSpeed / 1000).toFixed(3) : "0";
+  const progressValue = limit > 0 ? (numberOfTrials / limit) * 100 : 0;
 
   return (
-    <Box sx={{ width: "100%",  position: "relative" }}>
-      {/* Question Mark Button */}
-      <IconButton
-        onClick={() => setOpenRule(true)}
-        sx={{
-          position: "absolute",
-          top: 10,
-          right: 10,
-          backgroundColor: "rgb(45,145,244)",
-          color: "white",
-          "&:hover": { backgroundColor: "rgb(35,125,224)" },
-        }}
-      >
-        <HelpOutlineIcon />
-      </IconButton>
-
-      {/* Stats */}
-      <Box
-        sx={{
-          width: "100%",
-          backgroundColor: "rgb(45, 145, 244)",
-          color: "white",
-          borderTopLeftRadius: "10px",
-          borderTopRightRadius: "10px",
+    <Box
+      sx={{
+        width: "100%",
+        height: "calc(100vh - 120px)",
+        minHeight: 0,
+        display: "flex",
+        flexDirection: "column",
+        borderRadius: "30px",
+        overflow: "hidden",
+        background:
+          "linear-gradient(180deg, rgba(255,255,255,0.72) 0%, rgba(235,243,255,0.94) 100%)",
         
-        }}
-      >
-        <Typography sx={{ fontSize: { xs: "14px", sm: "20px", md: "30px" } }}>
-          Average Speed: {roundaverageSpeed}
-        </Typography>
-        <Typography sx={{ fontSize: { xs: "14px", sm: "20px", md: "30px" } }}>
-          Accuracy: {roundaccuracy}%
-        </Typography>
-      </Box>
-
-      {/* Last speed */}
-      <Box
-        sx={{
-          width: "100%",
-          backgroundColor: "rgb(71, 144, 216)",
-          color: "white",
-    
-          mb: { xs: 6, sm: 8 },
-          fontSize: { xs: "18px", sm: "25px", md: "40px" },
-          textAlign: "center",
-        }}
-      >
-        {lastSpeed / 1000} sec
-      </Box>
-
-      {/* Correct / Incorrect */}
-      {gotIt && (
-        <Box
-          sx={{
-            fontSize: { xs: "20px", sm: "30px", md: "40px" },
-            color: gotIt === "yes" ? "green" : "red",
-            width: "100%",
-            textAlign: "center",
-            mb: { xs: 3, sm: 4 },
-          }}
-        >
-          {gotIt === "yes" ? "✔" : "❌"}
-        </Box>
-      )}
-
-      {/* Numbers */}
-      {numberOfTrials <= limit && (
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            gap: { xs: 1, sm: 2, md: 4 },
-            mb: { xs: 2, sm: 3 },
-          }}
-        >
-          {numbers.map((num, index) => (
-            <Button
-              key={index}
-              onClick={() => submitAnswer(num)}
-              sx={{
-                backgroundColor: "rgb(45, 145, 244)",
-                color: "white",
-                fontSize: { xs: "16px", sm: "18px", md: "24px" },
-                minWidth: { xs: "50px", sm: "60px", md: "80px" },
-                minHeight: { xs: "35px", sm: "40px", md: "50px" },
-              }}
-            >
-              {num}
-            </Button>
-          ))}
-        </Box>
-      )}
-
-      {/* Rule Dialog */}
+        boxShadow: "0 18px 40px rgba(75, 100, 155, 0.14)",
+      }}
+    >
       <Dialog open={openRule} onClose={() => setOpenRule(false)}>
         <DialogTitle>Rule</DialogTitle>
         <DialogContent>
-          <Typography>
-            Select the number that is the most different or stands out the most from the others.
+          <Typography paragraph>
+            Select the number that stands out the most from the other two.
           </Typography>
-          <Typography>
-            Carefully compare each option and choose the one that is farthest in value or pattern.
+          <Typography paragraph>
+            Compare the spacing between the three numbers and choose the one that
+            is farthest away from the others.
           </Typography>
         </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenRule(false)}>Close</Button>
+        </DialogActions>
       </Dialog>
+
+      {/* Header */}
+      <Box sx={{ flexShrink: 0 }}>
+        <Box
+          sx={{
+            position: "relative",
+            background:
+              "linear-gradient(135deg, #59B2FF 0%, #2D91F4 46%, #2A67F5 100%)",
+            color: "white",
+            px: { xs: 1.5, sm: 2.5, md: 4 },
+            pt: { xs: 1.5, sm: 2, md: 2.5 },
+            pb: { xs: 1, sm: 1.5, md: 2 },
+          }}
+        >
+          <Button
+            onClick={() => setOpenRule(true)}
+            sx={{
+              position: "absolute",
+              top: { xs: 6, sm: 10 },
+              right: { xs: 6, sm: 10 },
+              minWidth: "unset",
+              width: { xs: 34, sm: 40 },
+              height: { xs: 34, sm: 40 },
+              borderRadius: "50%",
+              color: "rgba(255,255,255,0.95)",
+              "&:hover": {
+                backgroundColor: "rgba(255,255,255,0.10)",
+              },
+            }}
+          >
+            <HelpOutlineIcon fontSize="small" />
+          </Button>
+
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "70px 1fr 70px" },
+              alignItems: "center",
+              gap: 1,
+              textAlign: "center",
+            }}
+          >
+            <Box
+              sx={{
+                display: { xs: "none", md: "flex" },
+                justifyContent: "center",
+                opacity: 0.9,
+              }}
+            >
+              <SpeedRoundedIcon sx={{ fontSize: 48 }} />
+            </Box>
+
+            <Box>
+              <Typography
+                sx={{
+                  fontSize: { xs: "1.1rem", sm: "1.5rem", md: "2rem" },
+                  fontWeight: 500,
+                  lineHeight: 1.2,
+                }}
+              >
+                Average Speed: {roundaverageSpeed} sec
+              </Typography>
+
+              <Typography
+                sx={{
+                  fontSize: { xs: "1rem", sm: "1.35rem", md: "1.8rem" },
+                  fontWeight: 400,
+                  lineHeight: 1.2,
+                  mt: 0.4,
+                }}
+              >
+                Accuracy: {roundaccuracy}%
+              </Typography>
+            </Box>
+
+            <Box
+              sx={{
+                display: { xs: "none", md: "flex" },
+                justifyContent: "center",
+                opacity: 0.85,
+              }}
+            >
+              <TrackChangesRoundedIcon sx={{ fontSize: 48 }} />
+            </Box>
+          </Box>
+        </Box>
+
+        {/* Timer */}
+        <Box
+          sx={{
+            background:
+              "linear-gradient(180deg, rgba(79,155,237,0.92) 0%, rgba(53,119,222,0.92) 100%)",
+            color: "white",
+            textAlign: "center",
+            py: { xs: 0.8, sm: 1.2, md: 1.5 },
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: { xs: "1.6rem", sm: "2rem", md: "2.6rem" },
+              fontWeight: 400,
+              lineHeight: 1,
+            }}
+          >
+            {currentTimer} sec
+          </Typography>
+        </Box>
+
+        {/* Progress */}
+        <Box
+          sx={{
+            px: { xs: 2, sm: 3, md: 5 },
+            py: { xs: 1.2, sm: 1.5 },
+            background:
+              "linear-gradient(180deg, rgba(249,250,255,0.98) 0%, rgba(241,245,252,0.98) 100%)",
+            
+          }}
+        >
+          <LinearProgress
+            variant="determinate"
+            value={progressValue}
+            sx={{
+              height: { xs: 8, sm: 10, md: 12 },
+              borderRadius: 999,
+              backgroundColor: "rgba(123, 182, 242, 0.30)",
+              "& .MuiLinearProgress-bar": {
+                borderRadius: 999,
+                background: "linear-gradient(90deg, #21c173 0%, #05b10b 100%)",
+              },
+            }}
+          />
+          <Typography
+            sx={{
+              textAlign: "center",
+              color: "#334155",
+              fontSize: { xs: "0.85rem", sm: "0.95rem", md: "1.05rem" },
+              mt: 0.8,
+              fontWeight: 500,
+            }}
+          >
+            {numberOfTrials} / {limit} trials completed
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* Content */}
+      <Box
+        sx={{
+          flex: 1,
+          minHeight: 0,
+          p: { xs: 1, sm: 1.5, md: 2 },
+          display: "flex",
+          background:
+            "linear-gradient(180deg, rgba(249,250,255,0.98) 0%, rgba(241,245,252,0.98) 100%)",
+        }}
+      >
+        <Box
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            borderRadius: "26px",
+            background: "rgba(255,255,255,0.70)",
+            border: "1px solid rgba(180,200,240,0.30)",
+            boxShadow: "0 12px 26px rgba(95,115,155,0.12)",
+            p: { xs: 1, sm: 1.5, md: 2 },
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
+          {/* Feedback */}
+          <Box
+            sx={{
+              textAlign: "center",
+              minHeight: { xs: 32, sm: 40, md: 48 },
+              mb: { xs: 0.5, sm: 1, md: 1.5 },
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: { xs: "1.5rem", sm: "1.9rem", md: "2.3rem" },
+                lineHeight: 1,
+              }}
+            >
+              {gotIt === "yes" ? "✅" : gotIt === "no" ? "❌" : ""}
+            </Typography>
+          </Box>
+
+          {/* Play area */}
+          <Box
+            sx={{
+              flex: 1,
+              minHeight: 0,
+              borderRadius: "22px",
+              p: { xs: 1, sm: 1.5, md: 2 },
+              background:
+                "radial-gradient(circle at top left, rgba(235,245,255,0.95) 0%, rgba(194,220,255,0.85) 40%, rgba(181,211,251,0.90) 100%)",
+              border: "1px solid rgba(170,200,240,0.30)",
+              boxShadow: "inset 0 1px 10px rgba(255,255,255,0.28)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Box
+              sx={{
+                width: "100%",
+                maxWidth: 650,
+                height: "100%",
+                maxHeight: "100%",
+                borderRadius: "24px",
+                overflow: "hidden",
+                background:
+                  "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(240,245,255,0.88) 100%)",
+                border: "1px solid rgba(180,200,235,0.45)",
+                boxShadow: "0 10px 24px rgba(90,110,155,0.15)",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              {/* Numbers area */}
+              <Box
+                sx={{
+                  flex: 1,
+                  minHeight: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  px: { xs: 1, sm: 2, md: 3 },
+                  py: { xs: 1.5, sm: 2, md: 3 },
+                  background:
+                    "linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(243,246,252,0.95) 100%)",
+                }}
+              >
+                {numberOfTrials < limit ? (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      gap: { xs: 1, sm: 1.5, md: 2.5 },
+                      flexWrap: "wrap",
+                      width: "100%",
+                    }}
+                  >
+                    {numbers.map((num, index) => (
+                      <Button
+                        key={index}
+                        onClick={() => submitAnswer(num)}
+                        sx={{
+                          minWidth: { xs: 70, sm: 90, md: 120 },
+                          width: { xs: "22vw", sm: "18vw", md: 120 },
+                          maxWidth: 120,
+                          aspectRatio: "1 / 1",
+                          borderRadius: "16px",
+                          background:
+                            "linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(245,248,253,0.96) 100%)",
+                          border: "3px solid #FF5B5B",
+                          boxShadow: "0 8px 18px rgba(100,110,140,0.16)",
+                          color: "#111827",
+                          fontSize: { xs: "1.6rem", sm: "2rem", md: "2.8rem" },
+                          fontWeight: 500,
+                          "&:hover": {
+                            background:
+                              "linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(240,245,252,0.98) 100%)",
+                          },
+                        }}
+                      >
+                        {num}
+                      </Button>
+                    ))}
+                  </Box>
+                ) : (
+                  <Box sx={{ textAlign: "center", px: 2 }}>
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "1.2rem", sm: "1.5rem", md: "2rem" },
+                        fontWeight: 700,
+                        color: "#1F2A44",
+                      }}
+                    >
+                      Test completed
+                    </Typography>
+                    <Typography
+                      sx={{
+                        mt: 1,
+                        color: "#64748B",
+                        fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem" },
+                      }}
+                    >
+                      Accuracy: {roundaccuracy}% • Average Speed: {roundaverageSpeed} sec
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+
+              {/* Bottom note */}
+              {numberOfTrials < limit && (
+                <Box
+                  sx={{
+                    flexShrink: 0,
+                    px: { xs: 1, sm: 2, md: 3 },
+                    py: { xs: 1, sm: 1.4, md: 2 },
+                    borderTop: "1px solid rgba(190,205,230,0.55)",
+                    background:
+                      "linear-gradient(180deg, rgba(248,250,255,0.92) 0%, rgba(236,241,249,0.92) 100%)",
+                    textAlign: "center",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      color: "#64748B",
+                      fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1.05rem" },
+                      fontWeight: 500,
+                    }}
+                  >
+                    Tap the number that stands out the most
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+          </Box>
+        </Box>
+      </Box>
     </Box>
   );
 };

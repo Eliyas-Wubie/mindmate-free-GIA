@@ -5,11 +5,15 @@ import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText  from "@mui/material/ListItemText"; 
+import ListItemText from "@mui/material/ListItemText";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useEffect, useState } from "react";
-import { Box, TextField } from "@mui/material";
+import PsychologyAltRoundedIcon from "@mui/icons-material/PsychologyAltRounded";
+import InsightsRoundedIcon from "@mui/icons-material/InsightsRounded";
+import NumbersRoundedIcon from "@mui/icons-material/NumbersRounded";
+import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
+import { useEffect, useMemo, useState } from "react";
+import { Box, TextField, InputAdornment, Paper } from "@mui/material";
 import styles from "../component/nav.module.css";
 import SpaceVis from "../games/SpaceVis";
 import PercSpeed from "../games/PercSpeed";
@@ -24,11 +28,18 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   function handleOnChange(e) {
-    setLimit(parseInt(e.target.value));
+    const value = parseInt(e.target.value, 10);
+
+    if (isNaN(value)) {
+      setLimit(1);
+      return;
+    }
+
+    setLimit(Math.max(1, Math.min(99, value)));
   }
 
   const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
+    setMobileOpen((prev) => !prev);
   };
 
   useEffect(() => {
@@ -38,167 +49,300 @@ export default function Navbar() {
     else setRunning(null);
   }, [game, limit]);
 
-  const menuItems = [
-    { text: "Spacial Visualization", id: "vis" },
-    { text: "Percentage Speed", id: "perc" },
-    { text: "Number Speed", id: "num" },
-  ];
+  const menuItems = useMemo(
+    () => [
+      {
+        text: "Spatial Visualization",
+        id: "vis",
+        icon: <PsychologyAltRoundedIcon fontSize="small" />,
+      },
+      {
+        text: "Percentage Speed",
+        id: "perc",
+        icon: <InsightsRoundedIcon fontSize="small" />,
+      },
+      {
+        text: "Number Speed",
+        id: "num",
+        icon: <NumbersRoundedIcon fontSize="small" />,
+      },
+    ],
+    []
+  );
 
-  // Sidebar content
-  const drawer = (
-    <Box sx={{ width: drawerWidth, p: 4 }}>
-        
-      <h2 className={styles.sidebartitle}>Test list</h2>
-      <List>
-        {menuItems.map((item) => (
-          <ListItem key={item.id} disablePadding>
-            <ListItemButton
-              onClick={() => {
-                setGame(item.id);
-                setMobileOpen(false); // close mobile drawer after selection
-              }}
-              selected={game === item.id}
-              sx={{
-                "&.Mui-selected": {
-                  backgroundColor: "rgb(45, 145, 244)",
+  const drawerContent = (
+    <Box
+      sx={{
+        height: "100%",
+        p: 2,
+        background:
+          "linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(244,247,255,0.96) 100%)",
+      }}
+    >
+      <Paper
+        elevation={0}
+        sx={{
+          mt: { xs: 1, md: 1 },
+          borderRadius: "28px",
+          p: 3,
+          minHeight: "calc(100vh - 110px)",
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(240,245,255,0.90) 100%)",
+          border: "1px solid rgba(160,190,255,0.20)",
+          boxShadow: "0 10px 30px rgba(58, 97, 168, 0.10)",
+        }}
+      >
+        <Typography
+          sx={{  fontFamily: "'Courier Prime', monospace",
+            fontSize: "1.5rem",
+            fontWeight: 800,
+            color: "#1e4297",
+            mb: 2.5,
+          }}
+        >
+          Game list
+        </Typography>
 
-                  color: "white",
-                  fontWeight: "bold",
-                  borderRadius: "10px",
-                  
-                  "&:hover": { backgroundColor: "#519ad6", borderRadius: "10px" },
-                },
-                "&:hover": { backgroundColor: "#519ad6", borderRadius: "10px" },
-              }}
-            >
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+        <List sx={{ p: 0 }}>
+          {menuItems.map((item) => (
+            <ListItem key={item.id} disablePadding sx={{ mb: 1 }}>
+              <ListItemButton
+                onClick={() => {
+                  setGame(item.id);
+                  setMobileOpen(false);
+                }}
+                selected={game === item.id}
+                sx={{
+                  borderRadius: "18px",
+                  px: 2,
+                  py: 1.5,
+                  transition: "all 0.25s ease",
+                  color: game === item.id ? "white" : "#334155",
+                  background:
+                    game === item.id
+                      ? "linear-gradient(135deg, #53A8FF 0%, #2D91F4 55%, #2877E3 100%)"
+                      : "transparent",
+                  boxShadow:
+                    game === item.id
+                      ? "0 10px 24px rgba(45, 145, 244, 0.28)"
+                      : "none",
+                  "&:hover": {
+                    background:
+                      game === item.id
+                        ? "linear-gradient(135deg, #53A8FF 0%, #2D91F4 55%, #2877E3 100%)"
+                        : "rgba(45, 145, 244, 0.08)",
+                  },
+                }}
+              >
+                <Box sx={{ mr: 1.5, display: "flex", alignItems: "center" }}>
+                  {item.icon}
+                </Box>
+
+                <ListItemText
+                  primary={item.text}
+                  primaryTypographyProps={{
+                    fontWeight: game === item.id ? 700 : 500,
+                    fontSize: "1rem",
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Paper>
     </Box>
   );
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", backgroundColor: "#F6F9FC" }}>
-      {/* Top Bar */}
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        background:
+          "radial-gradient(circle at top left, #EEF6FF 0%, #EAF2FF 38%, #F8FAFF 72%, #F4F7FF 100%)",
+      }}
+    >
       <AppBar
         position="fixed"
+        elevation={0}
         sx={{
-          width: "100%",
-          backgroundColor: "#F6F9FC",
-          zIndex: (theme) => theme.zIndex.drawer + 1,
+          height: 64,
+          justifyContent: "center",
+          background: "rgba(255,255,255,0.80)",
+          backdropFilter: "blur(12px)",
+          borderBottom: "1px solid rgba(130,160,220,0.16)",
+          zIndex: (theme) => theme.zIndex.drawer + 2,
         }}
       >
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            {/* Mobile burger icon for <900px */}
+        <Toolbar
+          sx={{
+            minHeight: "64px !important",
+            display: "flex",
+            justifyContent: "space-between",
+            px: { xs: 1.5, md: 2.5 },
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
             <IconButton
-              color="black"
               edge="start"
-              sx={{ mr: 2, display: { md: "none" } }}
+              sx={{
+                mr: 0.5,
+                display: { md: "none" },
+                color: "#334155",
+              }}
               onClick={handleDrawerToggle}
             >
               <MenuIcon />
             </IconButton>
+
             <img
-              src="/pics/Logo maker project.png"
+              src="/pics/MindMate logo with colorful brain design.png"
               className={styles.logo}
               onClick={() => setGame(null)}
-              style={{ cursor: "pointer", height: "40px" }}
+              style={{
+                cursor: "pointer",
+                height: "120px",
+                objectFit: "contain",
+              }}
+              alt="MindMate Logo"
             />
           </Box>
+
           <TextField
             label="Limit"
             type="number"
             value={limit}
             onChange={handleOnChange}
             size="small"
-            sx={{ width: { xs: 70, sm: 100 } }}
+            sx={{
+              width: 110,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "14px",
+                backgroundColor: "rgba(255,255,255,0.94)",
+              },
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <TuneRoundedIcon sx={{ fontSize: 18, color: "#60A5FA" }} />
+                </InputAdornment>
+              ),
+            }}
           />
         </Toolbar>
       </AppBar>
-<Box sx={{ display: "flex", flexDirection: "", minHeight: "100vh", backgroundColor: "#F6F9FC" ,width:"100vw"}}>
-      {/* Desktop sidebar for >=900px */}
-      {/* Desktop sidebar for >=900px */}
-      <Drawer
-        variant="permanent"
-        sx={{
-          display: { xs: "none", md: "block" },
-          width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: drawerWidth,
-            boxSizing: "border-box",
-            overflow: "hidden", 
-          },
-        }}
-      >
-        {drawer}
-      </Drawer>
 
-      {/* Mobile sidebar for <900px */}
-      <Drawer
-        variant="temporary"
-        open={mobileOpen}
-        onClose={handleDrawerToggle}
-        ModalProps={{ keepMounted: true }}
-        sx={{
-          display: { xs: "block", md: "none" },
-          "& .MuiDrawer-paper": { width: drawerWidth },
-        }}
-      >
-        {drawer}
-      </Drawer>
-
-      {/* Main content */}
       <Box
-        component="main"
         sx={{
-          flexGrow: 1,
-          mt: "64px",
           display: "flex",
-          justifyContent: "center",
-          width: "100%",
+          flexGrow: 1,
+          pt: "64px",
+          minHeight: "100vh",
         }}
       >
+        {/* Desktop Sidebar */}
         <Box
           sx={{
-            width: "100%",
-            minWidth: "300px",
-            maxWidth: "800px",
-            borderRadius: "10px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-           
-            backgroundColor: "#F6F9FC",
-            
-          
+            width: { md: drawerWidth },
+            flexShrink: 0,
+            display: { xs: "none", md: "block" },
           }}
         >
-          {running ? (
-            running
-          ) : (
-            <Box sx={{ textAlign: "center" }}>
-              <Typography
+          {drawerContent}
+        </Box>
+
+        {/* Mobile Drawer */}
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{ keepMounted: true }}
+          sx={{
+            display: { xs: "block", md: "none" },
+            "& .MuiDrawer-paper": {
+              width: drawerWidth,
+              borderRight: "none",
+              background: "transparent",
+              boxShadow: "0 14px 30px rgba(0,0,0,0.12)",
+            },
+          }}
+        >
+          {drawerContent}
+        </Drawer>
+
+        {/* Main Content */}
+        <Box
+          sx={{
+            flexGrow: 1,
+            minWidth: 0,
+            p: { xs: 1.5, sm: 2, md: 2.5 },
+          }}
+        >
+          <Box
+            sx={{
+              minHeight: "calc(100vh - 96px)",
+              borderRadius: { xs: "24px", md: "30px" },
+              p: { xs: 2, md: 2.5 },
+              background:
+                "linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(255, 255, 255, 0.92) 100%)",
+              border: "1px solid rgba(146, 180, 255, 0.20)",
+              boxShadow: "0 14px 40px rgba(70, 95, 150, 0.12)",
+              overflow: "hidden",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {running ? (
+              <Box sx={{ width: "100%" }}>{running}</Box>
+            ) : (
+              <Box
                 sx={{
-                  color: "black",
-                  fontWeight: "bold",
-                  fontSize: { xs: "18px", sm: "26px" },
+                  textAlign: "center",
+                  width: "100%",
+                  maxWidth: 780,
                 }}
               >
-                {`Select a test ${window.innerWidth < 900 ? "above" : "from the sidebar"}`}
-              </Typography>
-              <Box
-                component="img"
-                src="pics/Logical Reasoning Preparation Book_ 100 IQ Questions Available at AMAZON.png"
-                sx={{ mt: 2, maxWidth: "90%", height: "auto", borderRadius: "10px" }}
-              />
-            </Box>
-          )}
+                <Typography
+                  sx={{
+                    color: "#1F2A44",
+                    fontWeight: 800,
+                    fontSize: { xs: "1.35rem", sm: "2rem" },
+                    mb: 1,
+                  }}
+                >
+                  Select a test
+                </Typography>
+
+                <Typography
+                  sx={{
+                    color: "#64748B",
+                    fontSize: { xs: "0.95rem", sm: "1.05rem" },
+                    mb: 3,
+                  }}
+                >
+                  Practice pattern recognition, percentage speed, and number speed
+                  in a focused interface.
+                </Typography>
+
+                <Box
+                  component="img"
+                  src="pics/Logical Reasoning Preparation Book_ 100 IQ Questions Available at AMAZON.png"
+                  sx={{
+                    mt: 1,
+                    width: "100%",
+                    maxWidth: 380,
+                    height: "auto",
+                    borderRadius: "24px",
+                    boxShadow: "0 12px 30px rgba(55,90,160,0.16)",
+                    border: "1px solid rgba(140,170,240,0.18)",
+                  }}
+                />
+              </Box>
+            )}
+          </Box>
         </Box>
-      </Box>
       </Box>
     </Box>
   );

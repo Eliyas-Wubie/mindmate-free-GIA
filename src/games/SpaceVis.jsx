@@ -1,9 +1,17 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Typography,
+  LinearProgress,
+} from "@mui/material";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import LinearProgress from "@mui/material/LinearProgress";
-import Typography from "@mui/material/Typography";
-import vis from "../data/vis.json";
+import SpeedRoundedIcon from "@mui/icons-material/SpeedRounded";
+import TrackChangesRoundedIcon from "@mui/icons-material/TrackChangesRounded";
 
 const SpaceVis = ({ limit }) => {
   const [selectedIndices, setSelectedIndices] = useState([]);
@@ -16,91 +24,92 @@ const SpaceVis = ({ limit }) => {
   const [averageSpeed, setAverageSpeed] = useState(0);
   const [accuracy, setAccuracy] = useState(0);
   const [numberOfCorrects, setNumberOfCorrects] = useState(0);
-
   const [gotIt, setGotIt] = useState(null);
   const [lastSpeed, setLastSpeed] = useState(null);
-
   const [openRulePopup, setOpenRulePopup] = useState(false);
+
   const Images = ["/pics/R.png"];
 
   function transformImage(image) {
     const degrees = [0, 90, 180, 270];
-    const randomIndex = Math.floor(Math.random() * degrees.length);
-    const randomDegree = degrees[randomIndex];
+    const randomDegree = degrees[Math.floor(Math.random() * degrees.length)];
     const flipOptions = [true, false];
-    const randomFlip = flipOptions[Math.floor(Math.random() * flipOptions.length)];
+    const randomFlip =
+      flipOptions[Math.floor(Math.random() * flipOptions.length)];
+
     return {
       flipped: randomFlip,
       image: (
-        <div>
+        <Box
+          sx={{
+            width: "100%",
+            aspectRatio: "1 / 1",
+            borderRadius: "10px",
+            backgroundColor: "rgba(255,255,255,0.98)",
+           
+            boxShadow: "0 8px 18px rgba(100,110,140,0.16)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            minWidth: 0,
+            minHeight: 0,
+          }}
+        >
           <img
             src={image}
             alt="Rotated example"
             style={{
               transform: `rotate(${randomDegree}deg) ${randomFlip ? "scaleX(-1)" : ""}`,
-              width: "100%",
-              maxWidth: "100px",
-              height: "auto",
+              width: "clamp(28px, 6vw, 70%)",
+              height: "clamp(28px, 6vw, 70%)",
+              maxWidth: "70%",
+              maxHeight: "70%",
+              objectFit: "contain",
             }}
           />
-        </div>
+        </Box>
       ),
     };
   }
 
   function submitAnswer(answer) {
-    setUnmatchedCounter((prevUnmatched) => {
-      const isCorrect = answer === 2 - prevUnmatched;
-      const template = {
-        answer,
-        time: timeTaken,
-        prevUnmatched,
-        realAnswer: 3 - prevUnmatched,
-        status: isCorrect ? "correct" : "incorrect",
-        timestamp: Date.now(),
-      };
-      setTimeTaken((prev) => {
-        const newValue = Date.now() - prev;
-        template.time = newValue;
-        setLastSpeed(newValue);
-        setAverageSpeed((prev) => {
-          if (numberOfTrials >= 1) {
-            return (prev * (numberOfTrials - 1) + newValue) / numberOfTrials;
-          } else {
-            return newValue;
-          }
-        });
-        return newValue;
-      });
+    const prevUnmatched = unmatchedCounter;
+    const realAnswer = 2 - prevUnmatched;
+    const isCorrect = answer === realAnswer;
+    const newTime = Date.now() - timeTaken;
+    const nextTrials = numberOfTrials + 1;
+    const nextCorrects = isCorrect ? numberOfCorrects + 1 : numberOfCorrects;
 
-      if (isCorrect) {
-        setGotIt("yes");
-        setNumberOfCorrects((prev) => {
-          const newCorrect = prev + 1;
-          setNumberOfTrials((prev) => {
-            const newValue = prev + 1;
-            setAccuracy((p) => (newValue >= 1 ? (newCorrect / newValue) * 100 : 0));
-            return newValue;
-          });
-          return newCorrect;
-        });
-      } else {
-        setGotIt("no");
-        setNumberOfTrials((prev) => {
-          const newValue = prev + 1;
-          setAccuracy((p) => (newValue >= 1 ? (numberOfCorrects / newValue) * 100 : 0));
-          return newValue;
-        });
-      }
+    const template = {
+      answer,
+      time: newTime,
+      prevUnmatched,
+      realAnswer,
+      status: isCorrect ? "correct" : "incorrect",
+      timestamp: Date.now(),
+    };
 
-      setAnswerCollection((prev) => [...prev, template]);
-      return 0;
-    });
-    handleStartPlaying();
+    setLastSpeed(newTime);
+    setAverageSpeed((prev) =>
+      numberOfTrials > 0 ? (prev * numberOfTrials + newTime) / nextTrials : newTime
+    );
+    setNumberOfCorrects(nextCorrects);
+    setNumberOfTrials(nextTrials);
+    setAccuracy(nextTrials > 0 ? (nextCorrects / nextTrials) * 100 : 0);
+    setGotIt(isCorrect ? "yes" : "no");
+    setAnswerCollection((prev) => [...prev, template]);
+    setUnmatchedCounter(0);
+
+    if (nextTrials < limit) {
+      setTimeout(() => {
+        handleStartPlaying();
+      }, 250);
+    }
   }
 
   function handleStartPlaying() {
     setTimeTaken(Date.now());
+
     const randomIndices = [];
     while (randomIndices.length < 2) {
       if (Images.length > 1) {
@@ -110,21 +119,30 @@ const SpaceVis = ({ limit }) => {
         randomIndices.push(0);
       }
     }
+
     setSelectedIndices(randomIndices);
 
     const tempImagePairs = [];
+    let unmatched = 0;
+
     for (const index of randomIndices) {
       const transformationResult1 = transformImage(Images[index]);
       const transformationResult2 = transformImage(Images[index]);
+
       const flipped1 = transformationResult1.flipped;
       const flipped2 = transformationResult2.flipped;
-      if (flipped1 || flipped2) {
-        if (flipped1 !== flipped2) {
-          setUnmatchedCounter((prev) => prev + 1);
-        }
+
+      if ((flipped1 || flipped2) && flipped1 !== flipped2) {
+        unmatched += 1;
       }
-      tempImagePairs.push([transformationResult1.image, transformationResult2.image]);
+
+      tempImagePairs.push([
+        transformationResult1.image,
+        transformationResult2.image,
+      ]);
     }
+
+    setUnmatchedCounter(unmatched);
     setImagePairs(tempImagePairs);
     setPlaying(true);
   }
@@ -133,183 +151,390 @@ const SpaceVis = ({ limit }) => {
     handleStartPlaying();
   }, []);
 
-  const roundaverageSpeed = averageSpeed.toFixed(3);
+  const roundaverageSpeed = (averageSpeed / 1000).toFixed(3);
   const roundaccuracy = accuracy.toFixed(3);
+  const currentTimer = lastSpeed !== null ? (lastSpeed / 1000).toFixed(3) : "0";
+  const progressValue = limit > 0 ? (numberOfTrials / limit) * 100 : 0;
 
   return (
     <Box
       sx={{
         width: "100%",
+        height: "100%",
+        minHeight: 0,
         display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
         flexDirection: "column",
-        position: "relative",
-        
+        borderRadius: "30px",
+        overflow: "hidden",
+        background:
+          "linear-gradient(180deg, rgba(255,255,255,0.72) 0%, rgba(235,243,255,0.94) 100%)",
+       
+        boxShadow: "0 18px 40px rgba(75, 100, 155, 0.14)",
       }}
     >
-      {/* Responsive question mark button */}
-      <Button
-  onClick={() => setOpenRulePopup(true)}
-  sx={{
-    position: "absolute",
-    top: { xs: 10, sm: 15 }, 
-    right: { xs: 10, sm: 15 }, 
-    fontSize: { xs: "16px", sm: "20px" },
-    
-    color: "white",
-    minWidth: { xs: "35px", sm: "40px" },
-    minHeight: { xs: "35px", sm: "40px" },
-    borderRadius: "50%",
-    "&:hover": { backgroundColor: "#0055cc" },
-  }}
->
-  <HelpOutlineIcon />
-</Button>
-
       <Dialog open={openRulePopup} onClose={() => setOpenRulePopup(false)}>
         <DialogTitle>Game Rules</DialogTitle>
         <DialogContent>
-          <p>
-            1. Two images are shown per trial.<br />
-            2. Click the number of unmatched images (0, 1, or 2).<br />
-            3. Your accuracy and average speed are calculated automatically.<br />
-            4. The game continues until you reach the trial limit.
-          </p>
+          <Typography paragraph>
+            Two rows are shown per trial, each containing two transformed images.
+          </Typography>
+          <Typography paragraph>
+            Count how many rows are unmatched and choose the correct answer: 0, 1, or 2.
+          </Typography>
+          <Typography paragraph>
+            Your accuracy and average speed are updated automatically after each trial.
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenRulePopup(false)}>Close</Button>
         </DialogActions>
       </Dialog>
 
-      {/* Stats */}
-      <Box
-        sx={{
-          fontSize: { xs: "18px", sm: "30px" },
-          color: "white",
-          width: "100%",
-          backgroundColor: "rgb(45, 145, 244)",
-          borderTopLeftRadius: "10px",
-          borderTopRightRadius: "10px",
-        }}
-      >
-        <Box sx={{ marginLeft: { xs: "3%", sm: "5%" } }}>
-          Average Speed: {roundaverageSpeed}
-        </Box>
-        <Box sx={{ marginLeft: { xs: "3%", sm: "5%" } }}>Accuracy: {roundaccuracy}%</Box>
-      </Box>
-
-      <Box
-        sx={{
-          fontSize: { xs: "24px", sm: "40px" },
-          color: "white",
-          width: "100%",
-          backgroundColor: "rgb(71, 144, 216)",
-          marginBottom:"10px",
-          textAlign: "center",
-        }}
-      >
-        {lastSpeed / 1000} sec
-      </Box>
-      <Box sx={{ width: "90%", mt: 2 }}>
-  <LinearProgress
-    variant="determinate"
-    value={(numberOfTrials / limit) * 100}
-    sx={{
-      height: 10,
-      borderRadius: 5
-    }}
-  />
-
-  <Typography sx={{ mt: 1, textAlign: "center", fontSize: "14px" }}>
-    {numberOfTrials} / {limit} trials completed
-  </Typography>
-</Box>
-
-      {/* Correct / incorrect */}
-      {gotIt ? (
+      {/* Header */}
+      <Box sx={{ flexShrink: 0 }}>
         <Box
           sx={{
-            fontSize: { xs: "24px", sm: "40px" },
-            color: gotIt === "yes" ? "green" : "red",
-            width: "100%",
-            backgroundColor: "white",
-            marginBottom: { xs: "15px", sm: "30px" },
-            textAlign: "center",
+            position: "relative",
+            background:
+              "linear-gradient(135deg, #59B2FF 0%, #2D91F4 46%, #2A67F5 100%)",
+            color: "white",
+            px: { xs: 1.25, sm: 1.75, md: 2.5 },
+            pt: { xs: 1, sm: 1.25, md: 1.6 },
+            pb: { xs: 0.8, sm: 1, md: 1.2 },
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.18)",
           }}
         >
-          {gotIt === "yes" ? "✔" : "❌"}
-        </Box>
-      ) : (<Box
-          sx={{
-            fontSize: { xs: "24px", sm: "40px" },
-            color: gotIt === "yes" ? "green" : "red",
-            width: "100%",
-            backgroundColor: "white",
-            marginBottom: { xs: "15px", sm: "30px" },
-            textAlign: "center",
-          }}
-        >
-          {"💖"}
-        </Box>)}
-
-      {/* Images */}
-      {numberOfTrials <= limit-1 && (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: { xs: 2, sm: 4 },
-            width: "100%",
-            alignItems: "center",
-          }}
-        >
-          {imagePairs.map((imagePair, index) => (
-            <Box
-              key={index}
-              sx={{
-                display: "flex",
-                flexDirection: { xs: "column", sm: "row" },
-                gap: { xs: 2, sm: 4 },
-                width: "100%",
-                justifyContent: "center",
-              }}
-            >
-              {imagePair[0]}
-              {imagePair[1]}
-            </Box>
-          ))}
-
-          {/* Answer buttons */}
-          <Box
+          <Button
+            onClick={() => setOpenRulePopup(true)}
             sx={{
-              display: "flex",
-              flexDirection: "row",
-              flexWrap: "wrap",
-              alignItems: "center",
-              gap: { xs: 1, sm: 4 },
-              justifyContent: "center",
-              mt: 2,
+              position: "absolute",
+              top: { xs: 4, sm: 8 },
+              right: { xs: 4, sm: 8 },
+              minWidth: "unset",
+              width: { xs: 28, sm: 34 },
+              height: { xs: 28, sm: 34 },
+              borderRadius: "50%",
+              color: "rgba(255,255,255,0.95)",
+              "&:hover": {
+                backgroundColor: "rgba(255,255,255,0.10)",
+              },
             }}
           >
-            {[0, 1, 2].map((num) => (
-              <Button
-                key={num}
-                onClick={() => submitAnswer(num)}
+            <HelpOutlineIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
+          </Button>
+
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "44px 1fr 44px" },
+              alignItems: "center",
+              gap: 1,
+              textAlign: "center",
+            }}
+          >
+            <Box
+              sx={{
+                display: { xs: "none", md: "flex" },
+                justifyContent: "center",
+                alignItems: "center",
+                opacity: 0.9,
+              }}
+            >
+              <SpeedRoundedIcon sx={{ fontSize: 34 }} />
+            </Box>
+
+            <Box>
+              <Typography
                 sx={{
-                  backgroundColor: "rgb(45, 145, 244)",
-                  color: "white",
-                  fontSize: { xs: "14px", sm: "16px" },
-                  minWidth: { xs: "60px", sm: "80px" },
-                  minHeight: { xs: "40px", sm: "50px" },
+                  fontSize: { xs: "0.9rem", sm: "1.1rem", md: "1.45rem" },
+                  fontWeight: 500,
+                  lineHeight: 1.15,
                 }}
               >
-                {num}
-              </Button>
-            ))}
+                Average Speed: {roundaverageSpeed} sec
+              </Typography>
+
+              <Typography
+                sx={{
+                  fontSize: { xs: "0.85rem", sm: "1rem", md: "1.3rem" },
+                  fontWeight: 400,
+                  lineHeight: 1.15,
+                  mt: 0.25,
+                }}
+              >
+                Accuracy: {roundaccuracy}%
+              </Typography>
+            </Box>
+
+            <Box
+              sx={{
+                display: { xs: "none", md: "flex" },
+                justifyContent: "center",
+                alignItems: "center",
+                opacity: 0.85,
+              }}
+            >
+              
+            </Box>
           </Box>
         </Box>
-      )}
+
+        {/* Timer */}
+        <Box
+          sx={{
+            background:
+              "linear-gradient(180deg, rgba(79,155,237,0.92) 0%, rgba(53,119,222,0.92) 100%)",
+            color: "white",
+            textAlign: "center",
+            py: { xs: 0.45, sm: 0.6, md: 0.85 },
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: { xs: "1.05rem", sm: "1.25rem", md: "1.7rem" },
+              fontWeight: 400,
+              lineHeight: 1,
+            }}
+          >
+            {currentTimer} sec
+          </Typography>
+        </Box>
+
+        {/* Progress */}
+        <Box
+          sx={{
+            px: { xs: 1.25, sm: 2, md: 3 },
+            py: { xs: 0.7, sm: 0.9 },
+            background:
+              "linear-gradient(180deg, rgba(249,250,255,0.98) 0%, rgba(241,245,252,0.98) 100%)",
+            
+          }}
+        >
+          <LinearProgress
+            variant="determinate"
+            value={progressValue}
+            sx={{
+              height: { xs: 5, sm: 7, md: 9 },
+              borderRadius: 999,
+              backgroundColor: "rgba(106, 92, 92, 0.3)",
+              "& .MuiLinearProgress-bar": {
+                borderRadius: 999,
+                background: "linear-gradient(90deg, #4ba350 0%, #2fcd41 100%)",
+              },
+            }}
+          />
+          <Typography
+            sx={{
+              textAlign: "center",
+              color: "#334155",
+              fontSize: { xs: "0.72rem", sm: "0.8rem", md: "0.9rem" },
+              mt: 0.5,
+              fontWeight: 500,
+            }}
+          >
+            {numberOfTrials} / {limit} trials completed
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* Main */}
+      <Box
+        sx={{
+          flex: 1,
+          minHeight: 0,
+          p: { xs: 0.5, sm: 0.75, md: 1 },
+          display: "flex",
+          background:
+           "linear-gradient(180deg, rgba(249,250,255,0.98) 0%, rgba(241,245,252,0.98) 100%)",
+        }}
+      >
+        <Box
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            borderRadius: "20px",
+            background: "linear-gradient(180deg, rgba(249,250,255,0.98) 0%, rgba(241,245,252,0.98) 100%)",
+            
+            
+            p: { xs: 0.5, sm: 0.75, md: 1 },
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {/* Feedback */}
+          <Box
+            sx={{
+              flexShrink: 0,
+              textAlign: "center",
+              minHeight: { xs: 20, sm: 24, md: 30 },
+              mb: { xs: 0.15, sm: 0.25, md: 0.4 },
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: { xs: "0.95rem", sm: "1.1rem", md: "1.35rem" },
+                lineHeight: 1,
+              }}
+            >
+              {gotIt === "yes" ? "✅" : gotIt === "no" ? "❌" : ""}
+            </Typography>
+          </Box>
+
+          {/* Playground */}
+          <Box
+            sx={{
+              flex: 1,
+              minHeight: 0,
+              borderRadius: "18px",
+              p: { xs: 0.5, sm: 0.75, md: 1 },
+              background:
+                "radial-gradient(circle at top left, rgba(235,245,255,0.95) 0%, rgba(194,220,255,0.85) 40%, rgba(181,211,251,0.90) 100%)",
+              border: "1px solid rgba(170,200,240,0.30)",
+              boxShadow: "inset 0 1px 10px rgba(255,255,255,0.28)",
+              display: "flex",
+            }}
+          >
+            <Box
+              sx={{
+                width: "100%",
+                minHeight: 0,
+                borderRadius: "18px",
+                overflow: "hidden",
+                background:
+                  "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(240,245,255,0.88) 100%)",
+                border: "1px solid rgba(180,200,235,0.45)",
+                boxShadow: "0 10px 24px rgba(90,110,155,0.15)",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              {/* Images area */}
+              <Box
+                sx={{
+                  flex: 1,
+                  minHeight: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  px: { xs: 0.6, sm: 1, md: 1.4 },
+                  py: { xs: 0.6, sm: 0.9, md: 1.2 },
+                  background:
+                    "linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(243,246,252,0.95) 100%)",
+                }}
+              >
+                {numberOfTrials < limit ? (
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      minHeight: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(2, 1fr)",
+                        gap: "clamp(6px, 1vw, 14px)",
+                        width: "min(100%, 42vh, 340px)",
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        alignItems: "stretch",
+                      }}
+                    >
+                      {imagePairs.map((imagePair, index) => (
+                        <Box
+                          key={index}
+                          sx={{ display: "contents" }}
+                        >
+                          {imagePair[0]}
+                          {imagePair[1]}
+                        </Box>
+                      ))}
+                    </Box>
+                  </Box>
+                ) : (
+                  <Box sx={{ textAlign: "center" }}>
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "1rem", sm: "1.2rem", md: "1.6rem" },
+                        fontWeight: 700,
+                        color: "#1F2A44",
+                      }}
+                    >
+                      Test completed
+                    </Typography>
+                    <Typography
+                      sx={{
+                        mt: 1,
+                        color: "#64748B",
+                        fontSize: { xs: "0.8rem", sm: "0.9rem", md: "1rem" },
+                      }}
+                    >
+                      Accuracy: {roundaccuracy}% • Average Speed: {roundaverageSpeed} sec
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+
+              {/* Answer buttons */}
+              {numberOfTrials < limit && (
+                <Box
+                  sx={{
+                    flexShrink: 0,
+                    px: { xs: 0.8, sm: 1.2, md: 1.6 },
+                    py: { xs: 0.8, sm: 1, md: 1.2 },
+                    borderTop: "1px solid rgba(190,205,230,0.55)",
+                    background:
+                      "linear-gradient(180deg, rgba(248,250,255,0.92) 0%, rgba(236,241,249,0.92) 100%)",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      gap: "clamp(6px, 1vw, 14px)",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    {[0, 1, 2].map((num) => (
+                      <Button
+                        key={num}
+                        onClick={() => submitAnswer(num)}
+                        sx={{
+                          minWidth: "clamp(44px, 7vw, 90px)",
+                          height: "clamp(34px, 4.6vh, 52px)",
+                          borderRadius: "12px",
+                          fontSize: "clamp(0.85rem, 1.4vw, 1.3rem)",
+                          fontWeight: 500,
+                          color: "white",
+                          background:
+                            num === 2
+                              ? "linear-gradient(135deg, #4AB7FF 0%, #2D91F4 50%, #2A8CF0 100%)"
+                              : "linear-gradient(135deg, #57AEFF 0%, #2D91F4 58%, #257CE7 100%)",
+                          boxShadow: "0 8px 18px rgba(45,145,244,0.26)",
+                          border: "1px solid rgba(255,255,255,0.28)",
+                          "&:hover": {
+                            background:
+                              "linear-gradient(135deg, #69BAFF 0%, #3698F7 58%, #2B83EC 100%)",
+                          },
+                        }}
+                      >
+                        {num}
+                      </Button>
+                    ))}
+                  </Box>
+                </Box>
+              )}
+            </Box>
+          </Box>
+        </Box>
+      </Box>
     </Box>
   );
 };

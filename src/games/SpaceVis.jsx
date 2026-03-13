@@ -53,6 +53,7 @@ const SpaceVis = ({ limit }) => {
             justifyContent: "center",
             minWidth: 0,
             minHeight: 0,
+            maxWidth: "70%"
           }}
         >
           <img
@@ -60,8 +61,8 @@ const SpaceVis = ({ limit }) => {
             alt="Rotated example"
             style={{
               transform: `rotate(${randomDegree}deg) ${randomFlip ? "scaleX(-1)" : ""}`,
-              width: "clamp(28px, 6vw, 70%)",
-              height: "clamp(28px, 6vw, 70%)",
+              width: "clamp(120px, 10vw, 20vw)",
+              height: "clamp(120px, 10vw, 20vw)",
               maxWidth: "70%",
               maxHeight: "70%",
               objectFit: "contain",
@@ -447,17 +448,15 @@ const SpaceVis = ({ limit }) => {
                   >
                     <Box
                       sx={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(2, 1fr)",
-                        gap: "clamp(6px, 1vw, 14px)",
-                        width: "min(100%, 42vh, 340px)",
-                        maxWidth: "100%",
-                        maxHeight: "100%",
-                        alignItems: "stretch",
+                        display: "flex",
+                        flexDirection: "row",
+                        gap:2,
+                        p:1
+
                       }}
                     >
                       {imagePairs.map((imagePair, index) => (
-                        <Box key={index} sx={{ display: "contents" }}>
+                        <Box key={index} sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap:1 }}>
                           {imagePair[0]}
                           {imagePair[1]}
                         </Box>

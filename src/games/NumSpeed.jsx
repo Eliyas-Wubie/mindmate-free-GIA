@@ -53,7 +53,6 @@ const NumSpeed = ({ limit }) => {
     setNumbers([num1, num2, num3]);
     setAnswer(dif1 > dif2 ? min : max);
     setTimeTaken(Date.now());
-    
   };
 
   const submitAnswer = (ans) => {
@@ -64,7 +63,9 @@ const NumSpeed = ({ limit }) => {
 
     setLastSpeed(newTime);
     setAverageSpeed((prev) =>
-      numberOfTrials > 0 ? (prev * numberOfTrials + newTime) / nextTrials : newTime
+      numberOfTrials > 0
+        ? (prev * numberOfTrials + newTime) / nextTrials
+        : newTime,
     );
     setNumberOfCorrects(nextCorrects);
     setNumberOfTrials(nextTrials);
@@ -91,15 +92,15 @@ const NumSpeed = ({ limit }) => {
     <Box
       sx={{
         width: "100%",
-        height: "calc(100vh - 120px)",
+        // height: "calc(100vh - 120px)",
         minHeight: 0,
         display: "flex",
         flexDirection: "column",
         borderRadius: "30px",
-        overflow: "hidden",
+        // overflow: "hidden",
         background:
           "linear-gradient(180deg, rgba(255,255,255,0.72) 0%, rgba(235,243,255,0.94) 100%)",
-        
+
         boxShadow: "0 18px 40px rgba(75, 100, 155, 0.14)",
       }}
     >
@@ -107,28 +108,17 @@ const NumSpeed = ({ limit }) => {
         <DialogTitle> Game Rules (How to Play)</DialogTitle>
         <DialogContent>
           <Typography paragraph>
-              The player is presented with three numbers.
-
-              Two of the numbers are close to each other, while one number is further away.
-
-              The task is to identify which number is the furthest from the other two.
-
-              The player selects the outlier number.
+            The player is presented with three numbers. Two of the numbers are
+            close to each other, while one number is further away. The task is
+            to identify which number is the furthest from the other two. The
+            player selects the outlier number.
           </Typography>
           <Typography paragraph>
-            What It Measures -
-
-            This test measures Numerical Processing Speed and Accuracy, including:
-
-            Quick numerical comparison
-
-            Quantitative reasoning
-
-            Ability to detect numerical outliers
-
-            Mental calculation speed
-
-            It reflects how efficiently a person can process numeric information under time pressure.
+            What It Measures - This test measures Numerical Processing Speed and
+            Accuracy, including: Quick numerical comparison Quantitative
+            reasoning Ability to detect numerical outliers Mental calculation
+            speed It reflects how efficiently a person can process numeric
+            information under time pressure.
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -147,6 +137,8 @@ const NumSpeed = ({ limit }) => {
             px: { xs: 1.5, sm: 2.5, md: 4 },
             pt: { xs: 1.5, sm: 2, md: 2.5 },
             pb: { xs: 1, sm: 1.5, md: 2 },
+            borderTopLeftRadius:"32px",
+            borderTopRightRadius:"32px"
           }}
         >
           <Button
@@ -216,9 +208,7 @@ const NumSpeed = ({ limit }) => {
                 justifyContent: "center",
                 opacity: 0.85,
               }}
-            >
-              
-            </Box>
+            ></Box>
           </Box>
         </Box>
 
@@ -249,8 +239,7 @@ const NumSpeed = ({ limit }) => {
             px: { xs: 2, sm: 3, md: 5 },
             py: { xs: 1.2, sm: 1.5 },
             background:
-              "linear-gradient(180deg, rgba(249,250,255,0.98) 0%, rgba(241,245,252,0.98) 100%)",
-            
+              "#00000000",
           }}
         >
           <LinearProgress
@@ -285,10 +274,9 @@ const NumSpeed = ({ limit }) => {
         sx={{
           flex: 1,
           minHeight: 0,
-          p: { xs: 1, sm: 1.5, md: 1.5 },
+          // p: { xs: 1, sm: 1.5, md: 1.5 },
           display: "flex",
-          background:
-            "linear-gradient(180deg, rgba(249,250,255,0.98) 0%, rgba(241,245,252,0.98) 100%)",
+          background: "#00000000",
         }}
       >
         <Box
@@ -299,7 +287,8 @@ const NumSpeed = ({ limit }) => {
             background: "rgba(255,255,255,0.70)",
             border: "1px solid rgba(180,200,240,0.30)",
             boxShadow: "0 12px 26px rgba(95,115,155,0.12)",
-            p: { xs: 1, sm: 1.5, md: 2 },
+            paddingX: { xs: 1, sm: 1.5, md: 2 },
+            paddingBottom: { xs: 1, sm: 1.5, md: 2 },
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
@@ -309,12 +298,14 @@ const NumSpeed = ({ limit }) => {
           <Box
             sx={{
               textAlign: "center",
-              minHeight: { xs: 32, sm: 40, md: 48 },
-              mb: { xs: 0.5, sm: 1, md: 1.5 },
+              // minHeight: { xs: 32, sm: 40, md: 48 },
+              // mb: { xs: 0.5, sm: 1, md: 1.5 },
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               flexShrink: 0,
+              // backgroundColor:"red",
+              paddingY: 1,
             }}
           >
             <Typography
@@ -348,7 +339,7 @@ const NumSpeed = ({ limit }) => {
                 width: "100%",
                 maxWidth: 650,
                 height: "100%",
-                maxHeight: "100%",
+                minHeight: "200px",
                 borderRadius: "24px",
                 overflow: "hidden",
                 background:
@@ -363,7 +354,7 @@ const NumSpeed = ({ limit }) => {
               <Box
                 sx={{
                   flex: 1,
-                  minHeight: 0,
+                  // minHeight: "200px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -382,17 +373,21 @@ const NumSpeed = ({ limit }) => {
                       gap: { xs: 1, sm: 1.5, md: 2.5 },
                       flexWrap: "wrap",
                       width: "100%",
+                      height: "100%"
                     }}
                   >
                     {numbers.map((num, index) => (
-                      <Button
+                      <Box
                         key={index}
                         onClick={() => submitAnswer(num)}
                         sx={{
                           minWidth: { xs: 70, sm: 90, md: 120 },
-                          width: { xs: "22vw", sm: "18vw", md: 130 },
-                          maxWidth: 110,
-                          aspectRatio: "1 / 0.5",
+                          width: { xs: "10%", sm: "10%", md: "10%" },
+                          maxWidth: 50,
+                          height: "50%",
+                          minHeight: "40px",
+                          maxHeight: "80px",
+                          // aspectRatio: "1 / 0.5",
                           borderRadius: "16px",
                           background:
                             "linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(245,248,253,0.96) 100%)",
@@ -405,10 +400,13 @@ const NumSpeed = ({ limit }) => {
                             background:
                               "linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(240,245,252,0.98) 100%)",
                           },
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center"
                         }}
                       >
                         {num}
-                      </Button>
+                      </Box>
                     ))}
                   </Box>
                 ) : (
@@ -429,7 +427,8 @@ const NumSpeed = ({ limit }) => {
                         fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem" },
                       }}
                     >
-                      Accuracy: {roundaccuracy}% • Average Speed: {roundaverageSpeed} sec
+                      Accuracy: {roundaccuracy}% • Average Speed:{" "}
+                      {roundaverageSpeed} sec
                     </Typography>
                   </Box>
                 )}

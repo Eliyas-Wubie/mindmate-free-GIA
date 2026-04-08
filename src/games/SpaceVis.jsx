@@ -69,9 +69,9 @@ export default function SpaceVis({ limit }) {
       image: (
         <Box
           sx={{
-            width: "clamp(74px, 8vw, 112px)",
+            width: "clamp(64px, min(8vw, 15vh), 112px)",
             aspectRatio: "1 / 1",
-            borderRadius: "16px",
+            borderRadius: "clamp(12px, 1.5vw, 16px)",
             display: "grid",
             placeItems: "center",
             background:
@@ -79,6 +79,9 @@ export default function SpaceVis({ limit }) {
             boxShadow: "0 0 16px rgba(255, 96, 210, 0.22), 0 12px 22px rgba(0,0,0,0.18)",
             "@media (min-width:600px) and (max-width:899px)": {
               width: "132px",
+            },
+            "@media (max-height:820px)": {
+              width: "clamp(58px, min(7vw, 12vh), 94px)",
             },
           }}
         >
@@ -215,9 +218,12 @@ export default function SpaceVis({ limit }) {
           flexWrap: "wrap",
           alignItems: "center",
           justifyContent: "space-between",
-          gap: 1,
-          mb: 0.75,
+          gap: { xs: 1, md: 0.8, lg: 1 },
+          mb: { xs: 0.75, md: 0.55, lg: 0.75 },
           flexShrink: 0,
+          "@media (max-height:820px)": {
+            mb: 0.45,
+          },
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -292,39 +298,70 @@ export default function SpaceVis({ limit }) {
         sx={{
           ...panelBase,
           borderRadius: "26px",
-          p: { xs: 0.65, md: 0.85 },
+          p: { xs: 0.65, md: 0.7, lg: 0.85 },
           flex: 1,
           minHeight: 0,
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
+          "@media (max-height:820px)": {
+            p: 0.55,
+          },
         }}
       >
-        <Box sx={{ textAlign: "center", py: 0.2, flexShrink: 0 }}>
+        <Box
+          sx={{
+            textAlign: "center",
+            py: { xs: 0.2, md: 0.1, lg: 0.2 },
+            flexShrink: 0,
+            "@media (max-height:820px)": {
+              py: 0,
+            },
+          }}
+        >
           <Typography
             sx={{
               fontFamily: '"Bahnschrift", "Trebuchet MS", sans-serif',
-              fontSize: { xs: "1.8rem", md: "2.5rem" },
+              fontSize: { xs: "1.8rem", md: "2.1rem", lg: "2.5rem" },
               fontWeight: 900,
               letterSpacing: "-0.06em",
               lineHeight: 0.92,
               color: "#fff",
               textShadow: "0 0 14px rgba(136, 96, 255, 0.3)",
+              "@media (max-height:820px)": {
+                fontSize: "1.85rem",
+              },
             }}
           >
             {currentTimer}
-            <Box component="span" sx={{ ml: 0.7, fontSize: { xs: "0.85rem", md: "1.1rem" }, color: "#ff4bb5" }}>
+            <Box
+              component="span"
+              sx={{
+                ml: 0.7,
+                fontSize: { xs: "0.85rem", md: "0.95rem", lg: "1.1rem" },
+                color: "#ff4bb5",
+              }}
+            >
               SEC
             </Box>
           </Typography>
         </Box>
 
-        <Box sx={{ px: { xs: 0.4, md: 1 }, pb: 0.7, flexShrink: 0 }}>
+        <Box
+          sx={{
+            px: { xs: 0.4, md: 0.7, lg: 1 },
+            pb: { xs: 0.7, md: 0.45, lg: 0.7 },
+            flexShrink: 0,
+            "@media (max-height:820px)": {
+              pb: 0.35,
+            },
+          }}
+        >
           <LinearProgress
             variant="determinate"
             value={progressValue}
             sx={{
-              height: 7,
+              height: { xs: 7, md: 6, lg: 7 },
               borderRadius: 999,
               backgroundColor: "rgba(18, 22, 48, 0.8)",
               border: "1px solid rgba(255,255,255,0.08)",
@@ -355,11 +392,15 @@ export default function SpaceVis({ limit }) {
               borderRadius: { xs: "23px", md: "29px" },
               background:
                 "radial-gradient(circle at 15% 55%, rgba(255, 63, 180, 0.12) 0%, rgba(255, 63, 180, 0) 26%), radial-gradient(circle at 85% 75%, rgba(69, 142, 255, 0.15) 0%, rgba(69, 142, 255, 0) 30%), linear-gradient(180deg, rgba(17, 16, 40, 0.98) 0%, rgba(9, 14, 33, 0.98) 100%)",
-              px: { xs: 0.7, md: 1 },
-              py: { xs: 0.7, md: 0.85 },
+              px: { xs: 0.7, md: 0.8, lg: 1 },
+              py: { xs: 0.7, md: 0.7, lg: 0.85 },
               height: "100%",
               display: "flex",
               flexDirection: "column",
+              "@media (max-height:820px)": {
+                px: 0.7,
+                py: 0.55,
+              },
             }}
           >
             <Box
@@ -424,8 +465,12 @@ export default function SpaceVis({ limit }) {
                 flex: 1,
                 display: "grid",
                 placeItems: "center",
-                py: 0.2,
-                gap:{xs: 0.9, sm: 0.9,}
+                py: { xs: 0.2, md: 0.1, lg: 0.2 },
+                gap: { xs: 0.9, sm: 0.9, md: 0.6, lg: 0.9 },
+                "@media (max-height:820px)": {
+                  py: 0,
+                  gap: 0.4,
+                },
               }}
             >
               {numberOfTrials < limit ? (
@@ -436,15 +481,36 @@ export default function SpaceVis({ limit }) {
                       gridTemplateColumns: {
                         xs: "repeat(2, 112px)",
                         sm: "repeat(2, 142px)",
-                        md: "repeat(2, 112px)",
+                        md: "repeat(2, clamp(92px, min(9vw, 15vh), 112px))",
+                        lg: "repeat(2, 112px)",
                       },
                       justifyContent: "center",
-                      columnGap: { xs: 0.4, sm: 0.9, md: 0.9 },
-                      rowGap: { xs: 0.5, sm: 0.5, md: 0.9 },
+                      columnGap: { xs: 0.4, sm: 0.9, md: 0.65, lg: 0.9 },
+                      rowGap: { xs: 0.5, sm: 0.5, md: 0.65, lg: 0.9 },
+                      "@media (max-height:820px)": {
+                        gridTemplateColumns: "repeat(2, clamp(84px, min(8vw, 12vh), 96px))",
+                        columnGap: 0.5,
+                        rowGap: 0.45,
+                      },
                     }}
                   >
                     {imagePairs.flat().map((image, index) => (
-                      <Box key={`${selectedIndices.join("-")}-${index}`} sx={{ display: "grid", placeItems: "center", height:{ sm: 142, } }}>
+                      <Box
+                        key={`${selectedIndices.join("-")}-${index}`}
+                        sx={{
+                          display: "grid",
+                          placeItems: "center",
+                          height: {
+                            xs: 112,
+                            sm: 142,
+                            md: "clamp(92px, min(9vw, 15vh), 112px)",
+                            lg: 112,
+                          },
+                          "@media (max-height:820px)": {
+                            height: "clamp(84px, min(8vw, 12vh), 96px)",
+                          },
+                        }}
+                      >
                         {image }
                       </Box>
                     ))}
@@ -460,16 +526,24 @@ export default function SpaceVis({ limit }) {
                       pt: {
                         xs: 1.25,
                         sm: 1.5,
-                        md: 0,
+                        md: 0.35,
+                        lg: 0,
+                      },
+                      "@media (max-height:820px)": {
+                        pt: 0.25,
                       },
                     }}
                   >
                     <Typography
                       sx={{
-                        mt: { xs: 0.45, sm: 0.5, md: 0.75 },
+                        mt: { xs: 0.45, sm: 0.5, md: 0.55, lg: 0.75 },
                         textAlign: "center",
                         color: "rgba(237, 232, 255, 0.9)",
                         fontSize: { xs: "0.74rem", sm: "0.88rem", md: "0.84rem" },
+                        "@media (max-height:820px)": {
+                          mt: 0.35,
+                          fontSize: "0.78rem",
+                        },
                       }}
                     >
                       How many are different from the target?
@@ -477,11 +551,15 @@ export default function SpaceVis({ limit }) {
 
                     <Box
                       sx={{
-                        mt: { xs: 0.35, sm: 0.4, md: 0.55 },
+                        mt: { xs: 0.35, sm: 0.4, md: 0.45, lg: 0.55 },
                         display: "flex",
                         justifyContent: "center",
-                        gap: { xs: 0.45, sm: 0.8, md: 0.7 },
+                        gap: { xs: 0.45, sm: 0.8, md: 0.55, lg: 0.7 },
                         flexWrap: "wrap",
+                        "@media (max-height:820px)": {
+                          mt: 0.3,
+                          gap: 0.45,
+                        },
                       }}
                     >
                       {[0, 1, 2].map((num) => {
@@ -493,10 +571,10 @@ export default function SpaceVis({ limit }) {
                             key={num}
                             onClick={() => submitAnswer(num)}
                             sx={{
-                              minWidth: { xs: 74, sm: 96, md: 74 },
-                              height: { xs: 32, sm: 38, md: 32 },
+                              minWidth: { xs: 74, sm: 96, md: 68, lg: 74 },
+                              height: { xs: 32, sm: 38, md: 30, lg: 32 },
                               borderRadius: "999px",
-                              fontSize: { xs: "0.8rem", sm: "0.92rem", md: "0.8rem" },
+                              fontSize: { xs: "0.8rem", sm: "0.92rem", md: "0.76rem", lg: "0.8rem" },
                               fontWeight: 800,
                               color: "#fff",
                               background: isPrimary
@@ -511,6 +589,11 @@ export default function SpaceVis({ limit }) {
                                   : "1px solid rgba(143, 119, 214, 0.36)",
                               "&:hover": {
                                 filter: "brightness(1.06)",
+                              },
+                              "@media (max-height:820px)": {
+                                minWidth: 64,
+                                height: 28,
+                                fontSize: "0.72rem",
                               },
                             }}
                           >
@@ -540,13 +623,17 @@ export default function SpaceVis({ limit }) {
 
         <Box
           sx={{
-            pt: 0.45,
+            pt: { xs: 0.45, md: 0.35, lg: 0.45 },
             textAlign: "center",
             color: "rgba(168, 158, 210, 0.7)",
             fontSize: "0.56rem",
             letterSpacing: "0.16em",
             textTransform: "uppercase",
             flexShrink: 0,
+            "@media (max-height:820px)": {
+              pt: 0.2,
+              fontSize: "0.5rem",
+            },
           }}
         >
           Train Smart / Get Faster / Stay Sharp

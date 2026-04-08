@@ -1,21 +1,27 @@
-.sidebartitle{
-    text-align: left;
-    padding-left: 7%;
-    margin: 0;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-weight: 600;
+.sidebartitle {
+  text-align: left;
+  padding-left: 7%;
+  margin: 0;
+  font-weight: 600;
 }
-.logo{
-    height: 50px;
+
+.logo {
+  height: 58px;
+  width: auto;
+  cursor: pointer;
+  object-fit: contain;
+  filter: drop-shadow(0 0 20px rgba(210, 92, 255, 0.18));
 }
-.logo2{
-    height: 50px;
-    width: 100px;
-    margin: 10px;
+
+@media (min-width: 900px) {
+  .logo {
+    height: 78px;
+  }
 }
-.logo:hover{
-    cursor: pointer;
-}
-.logo2:hover{
-    cursor: pointer;
+
+.logo2 {
+  height: 50px;
+  width: 100px;
+  margin: 10px;
+  cursor: pointer;
 }

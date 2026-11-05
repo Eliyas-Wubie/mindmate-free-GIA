@@ -1,570 +1,322 @@
-import { useEffect, useMemo, useState } from "react";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import IconButton from "@mui/material/IconButton";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
-import Box from "@mui/material/Box";
-import MenuIcon from "@mui/icons-material/Menu";
-import SportsEsportsRoundedIcon from "@mui/icons-material/SportsEsportsRounded";
-import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
-import TagRoundedIcon from "@mui/icons-material/TagRounded";
-import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
-import SpaceDashboardRoundedIcon from "@mui/icons-material/SpaceDashboardRounded";
-import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
+﻿import { useEffect, useRef, useState } from "react";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 import SpaceVis from "../games/SpaceVis";
 import PercSpeed from "../games/PercSpeed";
 import NumSpeed from "../games/NumSpeed";
-import styles from "../component/nav.module.css";
 
-const drawerWidth = 320;
+const exercises = [
+  {
+    id: "vis",
+    name: "Spatial visualization",
+    tag: "A different perspective.",
+    description:
+      "Rotate shapes in your head. Find what fits. Give your spatial thinking a new angle.",
+    skill: "Mental rotation",
+    component: SpaceVis,
+  },
+  {
+    id: "perc",
+    name: "Perceptual speed",
+    tag: "Catch the little things.",
+    description:
+      "Spot the match, cut through the noise, and turn a second look into a first instinct.",
+    skill: "Pattern recognition",
+    component: PercSpeed,
+  },
+  {
+    id: "num",
+    name: "Number speed",
+    tag: "Make every second count.",
+    description:
+      "Find the distance between numbers. Practice quick decisions with a little precision.",
+    skill: "Numerical accuracy",
+    component: NumSpeed,
+  },
+];
+const theme = createTheme({
+  palette: {
+    mode: "dark",
+    primary: { main: "#f2f0eb" },
+    background: { default: "#080808", paper: "#151515" },
+    text: { primary: "#f2f0eb", secondary: "#a6a39e" },
+  },
+  typography: { fontFamily: "Arial, Helvetica, sans-serif" },
+  shape: { borderRadius: 2 },
+});
 
-const shellStyles = {
-  height: "100vh",
-  display: "flex",
-  flexDirection: "column",
-  background:
-    "radial-gradient(circle at 15% 20%, rgba(241, 61, 194, 0.18) 0%, rgba(241, 61, 194, 0) 26%), radial-gradient(circle at 90% 18%, rgba(72, 124, 255, 0.22) 0%, rgba(72, 124, 255, 0) 24%), radial-gradient(circle at 82% 88%, rgba(184, 59, 255, 0.16) 0%, rgba(184, 59, 255, 0) 24%), linear-gradient(135deg, #090915 0%, #120c24 48%, #14091f 100%)",
-  position: "relative",
-  overflowX: "hidden",
-  overflowY: "hidden",
-};
-
-const glassPanel = {
-  background:
-    "linear-gradient(180deg, rgba(20, 17, 43, 0.94) 0%, rgba(18, 15, 36, 0.9) 100%)",
-  border: "1px solid rgba(159, 121, 255, 0.18)",
-  boxShadow:
-    "0 24px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06)",
-  backdropFilter: "blur(18px)",
-};
-
-export default function Navbar() {
-  const [game, setGame] = useState(null);
-  const [running, setRunning] = useState(null);
-  const [limit, setLimit] = useState(10);
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  function handleOnChange(e) {
-    const rawValue = e.target.value;
-    const value = parseInt(rawValue, 10);
-
-    if (rawValue === "" || Number.isNaN(value)) {
-      setLimit(10);
-      return;
-    }
-
-    setLimit(Math.max(1, Math.min(100, value)));
-  }
-
-  const handleDrawerToggle = () => {
-    setMobileOpen((prev) => !prev);
-  };
-
-  useEffect(() => {
-    if (game === "vis") setRunning(<SpaceVis limit={limit} />);
-    else if (game === "perc") setRunning(<PercSpeed limit={limit} />);
-    else if (game === "num") setRunning(<NumSpeed limit={limit} />);
-    else setRunning(null);
-  }, [game, limit]);
-
-  const menuItems = useMemo(
-    () => [
-      {
-        text: "Spatial Visualization",
-        subtitle: "Rotate / Decide / Win",
-        id: "vis",
-        icon: <SportsEsportsRoundedIcon fontSize="small" />,
-      },
-      {
-        text: "Perceptual Speed",
-        subtitle: "React / Faster / Sharper",
-        id: "perc",
-        icon: <BoltRoundedIcon fontSize="small" />,
-      },
-      {
-        text: "Number Speed & Accuracy",
-        subtitle: "Think / Calculate / Master",
-        id: "num",
-        icon: <TagRoundedIcon fontSize="small" />,
-      },
-    ],
-    []
-  );
-
-  const activeGame = menuItems.find((item) => item.id === game);
-
-  const drawerContent = (
-    <Box sx={{ height: "100%", p: { xs: 1.25, md: 1 } }}>
-      <Box
-        sx={{
-          ...glassPanel,
-          borderRadius: "28px",
-          height: "100%",
-          p: 1.7,
-          color: "#F5F0FF",
-          display: "flex",
-          flexDirection: "column",
-          gap: 1,
-          overflow: "hidden",
-        }}
-      >
-        <Box>
-          <Typography
-            sx={{
-              fontFamily: '"Bahnschrift", "Trebuchet MS", sans-serif',
-              fontSize: "1.8rem",
-              fontWeight: 800,
-              lineHeight: 0.95,
-              letterSpacing: "-0.04em",
-            }}
-          >
-            Mind
-            <Box component="span" sx={{ color: "#ff4fc9" }}>
-              Mate
-            </Box>
-          </Typography>
-          <Typography
-            sx={{
-              mt: 0.5,
-              color: "rgba(219, 205, 255, 0.7)",
-              fontSize: "0.72rem",
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-            }}
-          >
-            Train / Focus / Win
-          </Typography>
-        </Box>
-
-        <Box>
-          <Typography
-            sx={{
-              fontSize: "0.98rem",
-              fontWeight: 700,
-              color: "#FFFFFF",
-              mb: 0.8,
-            }}
-          >
-            GIA Game list
-          </Typography>
-
-          <List sx={{ p: 0, display: "flex", flexDirection: "column", gap: 0.7 }}>
-            {menuItems.map((item) => {
-              const selected = game === item.id;
-
-              return (
-                <ListItem key={item.id} disablePadding>
-                  <ListItemButton
-                    onClick={() => {
-                      setGame(item.id);
-                      setMobileOpen(false);
-                    }}
-                    sx={{
-                      borderRadius: "20px",
-                      px: 2,
-                      py: 0.95,
-                      alignItems: "center",
-                      background: selected
-                        ? "linear-gradient(90deg, rgba(100, 56, 255, 0.75) 0%, rgba(255, 77, 199, 0.72) 100%)"
-                        : "linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 100%)",
-                      border: selected
-                        ? "1px solid rgba(255, 143, 230, 0.55)"
-                        : "1px solid rgba(255,255,255,0.06)",
-                      boxShadow: selected
-                        ? "0 0 0 1px rgba(82, 174, 255, 0.26), 0 16px 26px rgba(255, 52, 181, 0.22), inset 0 0 24px rgba(255, 255, 255, 0.08)"
-                        : "none",
-                      "&:hover": {
-                        background: selected
-                          ? "linear-gradient(90deg, rgba(100, 56, 255, 0.8) 0%, rgba(255, 77, 199, 0.78) 100%)"
-                          : "rgba(255,255,255,0.05)",
-                      },
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        mr: 1.55,
-                        width: 34,
-                        height: 34,
-                        borderRadius: "14px",
-                        display: "grid",
-                        placeItems: "center",
-                        color: selected ? "#fff" : "#d38fff",
-                        background: selected
-                          ? "rgba(255,255,255,0.12)"
-                          : "linear-gradient(180deg, rgba(148, 76, 255, 0.16) 0%, rgba(255, 82, 191, 0.08) 100%)",
-                      }}
-                    >
-                      {item.icon}
-                    </Box>
-
-                    <ListItemText
-                      primary={item.text}
-                      secondary={item.subtitle}
-                      primaryTypographyProps={{
-                        fontWeight: 700,
-                        fontSize: "0.88rem",
-                        color: "#fff",
-                        lineHeight: 1.2,
-                      }}
-                      secondaryTypographyProps={{
-                        fontSize: "0.7rem",
-                        color: selected
-                          ? "rgba(255,255,255,0.78)"
-                          : "rgba(214, 201, 255, 0.62)",
-                        mt: 0.35,
-                      }}
-                    />
-
-                    <ChevronRightRoundedIcon
-                      sx={{ color: selected ? "#fff" : "rgba(220, 205, 255, 0.55)" }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              );
-            })}
-          </List>
-        </Box>
-
-        <Box
-          sx={{
-            borderRadius: "24px",
-            p: 1.25,
-            color: "#fff",
-            background:
-              "radial-gradient(circle at 55% 58%, rgba(230, 74, 255, 0.35) 0%, rgba(230, 74, 255, 0) 24%), radial-gradient(circle at 75% 20%, rgba(55, 120, 255, 0.2) 0%, rgba(55, 120, 255, 0) 30%), linear-gradient(135deg, rgba(36, 23, 70, 0.96) 0%, rgba(16, 16, 41, 0.98) 100%)",
-            border: "1px solid rgba(139, 111, 255, 0.24)",
-          }}
-        >
-          <Typography sx={{ fontSize: "1.2rem", fontWeight: 800, lineHeight: 1 }}>
-            LEVEL UP
-          </Typography>
-          <Typography
-            sx={{
-              color: "#ff54c8",
-              fontWeight: 700,
-              letterSpacing: "0.08em",
-              mt: 0.4,
-            }}
-          >
-            YOUR BRAIN
-          </Typography>
-
-          <Box
-            sx={{
-              mt: 0.8,
-              borderRadius: "22px",
-              minHeight: 74,
-              background:
-                "radial-gradient(circle at 50% 70%, rgba(255, 72, 199, 0.28) 0%, rgba(255, 72, 199, 0) 28%), url('/pics/MindMate logo with colorful brain design.png') center / contain no-repeat",
-            }}
-          />
-
-          <Typography sx={{ mt: 0.55, color: "rgba(255,255,255,0.82)", fontSize: "0.8rem" }}>
-            Short games.
-          </Typography>
-          <Typography sx={{ color: "#ff61c6", fontWeight: 700, fontSize: "0.8rem" }}>
-            Big impact.
-          </Typography>
-          <Typography sx={{ color: "#ffffff", fontWeight: 700, fontSize: "0.8rem" }}>
-            Real results.
-          </Typography>
-        </Box>
-
-      </Box>
-    </Box>
-  );
-
+function Sculpture() {
   return (
-    <Box sx={shellStyles}>
-      <Box
-        sx={{
-          position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-          opacity: 0.45,
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px)",
-          backgroundSize: "72px 72px",
-          maskImage: "radial-gradient(circle at center, black 30%, transparent 90%)",
-        }}
-      />
-
-      <AppBar
-        position="fixed"
-        elevation={0}
-        sx={{
-          background: "transparent",
-          boxShadow: "none",
-          zIndex: (theme) => theme.zIndex.drawer + 2,
-        }}
-      >
-        <Toolbar
-          sx={{
-            minHeight: "72px !important",
-            px: { xs: 1.25, md: 2.2 },
-            py: 0.8,
-            justifyContent: "space-between",
-            gap: 2,
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <IconButton
-              edge="start"
-              sx={{
-                display: { md: "none" },
-                color: "#fff",
-                border: "1px solid rgba(255,255,255,0.12)",
-                background: "rgba(16, 14, 32, 0.68)",
-              }}
-              onClick={handleDrawerToggle}
-            >
-              <MenuIcon />
-            </IconButton>
-
-            <img
-              src="/pics/MindMate logo with colorful brain design.png"
-              className={styles.logo}
-              onClick={() => {
-                setGame(null);
-                setMobileOpen(false);
-              }}
-              alt="MindMate Logo"
-            />
-          </Box>
-
-          <Box
-            sx={{
-              ...glassPanel,
-              borderRadius: "22px",
-              px: 1.2,
-              py: 0.75,
-              display: "flex",
-              alignItems: "center",
-              gap: 0.8,
-              color: "#fff",
-            }}
-          >
-            <TextField
-              variant="standard"
-              type="number"
-              value={limit}
-              onChange={handleOnChange}
-              inputProps={{
-                min: 1,
-                max: 100,
-                step: 1,
-              }}
-              InputProps={{
-                disableUnderline: true,
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <TuneRoundedIcon sx={{ fontSize: 18, color: "#f4a2ff" }} />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                width: 112,
-                "& .MuiInputBase-root": {
-                  color: "#fff",
-                  fontWeight: 700,
-                  fontSize: "1rem",
-                },
-                "& input": {
-                  padding: 0,
-                  textAlign: "right",
-                },
-              }}
-            />
-            <Typography sx={{ color: "rgba(255,255,255,0.68)", fontWeight: 500 }}>
-              Limit
-            </Typography>
-          </Box>
-        </Toolbar>
-      </AppBar>
-
-      <Box sx={{ display: "flex", flexGrow: 1, pt: "72px", height: "100vh" }}>
-        <Box
-          sx={{
-            width: { md: drawerWidth },
-            flexShrink: 0,
-            display: { xs: "none", md: "block" },
-            height: "calc(100vh - 72px)",
-          }}
-        >
-          {drawerContent}
-        </Box>
-
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{ keepMounted: true }}
-          sx={{
-            display: { xs: "block", md: "none" },
-            "& .MuiDrawer-paper": {
-              width: drawerWidth,
-              borderRight: "none",
-              background: "rgba(5,5,14,0.45)",
-              boxShadow: "0 24px 60px rgba(0,0,0,0.45)",
-            },
-          }}
-        >
-          <Toolbar sx={{ minHeight: "72px !important" }} />
-          {drawerContent}
-        </Drawer>
-
-        <Box
-          sx={{
-            flexGrow: 1,
-            minWidth: 0,
-            p: { xs: 0.85, sm: 1, md: 1 },
-            display: "flex",
-            height: "calc(100vh - 72px)",
-          }}
-        >
-          <Box
-            sx={{
-              ...glassPanel,
-              height: "100%",
-              width: "100%",
-              borderRadius: { xs: "28px", md: "32px" },
-              p: { xs: 0.85, md: 1 },
-              overflow: "hidden",
-              position: "relative",
-              display: "flex",
-            }}
-          >
-            <Box
-              sx={{
-                position: "absolute",
-                inset: 0,
-                pointerEvents: "none",
-                background:
-                  "radial-gradient(circle at 18% 70%, rgba(255, 61, 186, 0.14) 0%, rgba(255, 61, 186, 0) 30%), radial-gradient(circle at 88% 64%, rgba(63, 129, 255, 0.15) 0%, rgba(63, 129, 255, 0) 28%)",
-              }}
-            />
-
-            {running ? (
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  position: "relative",
-                  zIndex: 1,
-                  display: "flex",
-                  overflow: "hidden",
-                }}
-              >
-                {running}
-              </Box>
-            ) : (
-              <Box
-                sx={{
-                  position: "relative",
-                  zIndex: 1,
-                  width: "100%",
-                  minHeight: "calc(100vh - 180px)",
-                  display: "grid",
-                  placeItems: "center",
-                  px: 2,
-                }}
-              >
-                <Box sx={{ maxWidth: 860, textAlign: "center" }}>
-                  <Box
-                    sx={{
-                      width: 70,
-                      height: 70,
-                      borderRadius: "22px",
-                      mx: "auto",
-                      mb: 2,
-                      display: "grid",
-                      placeItems: "center",
-                      color: "#fff",
-                      background:
-                        "linear-gradient(180deg, rgba(161, 83, 255, 0.9) 0%, rgba(104, 71, 255, 0.95) 100%)",
-                      boxShadow: "0 16px 34px rgba(166, 79, 255, 0.3)",
-                    }}
-                  >
-                    <SpaceDashboardRoundedIcon />
-                  </Box>
-
-                  <Typography
-                    sx={{
-                      color: "#fff",
-                      fontSize: { xs: "2rem", md: "3.25rem" },
-                      fontWeight: 800,
-                      letterSpacing: "-0.05em",
-                      lineHeight: 0.96,
-                    }}
-                  >
-                    Train faster with a sharper brain-gym UI
-                  </Typography>
-                  <Typography
-                    sx={{
-                      mt: 1.5,
-                      color: "rgba(222, 214, 255, 0.78)",
-                      fontSize: { xs: "1rem", md: "1.15rem" },
-                    }}
-                  >
-                    Pick a test from the left and jump into a neon dashboard designed
-                    around speed, focus, and feedback.
-                  </Typography>
-
-                  <Box
-                    sx={{
-                      mt: 3,
-                      display: "flex",
-                      justifyContent: "center",
-                      gap: 1.4,
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    {menuItems.map((item) => (
-                      <Box
-                        key={item.id}
-                        onClick={() => setGame(item.id)}
-                        sx={{
-                          minWidth: 220,
-                          p: 2,
-                          borderRadius: "20px",
-                          cursor: "pointer",
-                          color: "#fff",
-                          background:
-                            item.id === activeGame?.id
-                              ? "linear-gradient(90deg, rgba(97, 65, 255, 0.78) 0%, rgba(255, 77, 196, 0.75) 100%)"
-                              : "rgba(255,255,255,0.04)",
-                          border: "1px solid rgba(255,255,255,0.08)",
-                          boxShadow:
-                            item.id === activeGame?.id
-                              ? "0 16px 28px rgba(255, 66, 193, 0.2)"
-                              : "none",
-                        }}
-                      >
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
-                          {item.icon}
-                          <Typography sx={{ fontWeight: 700 }}>{item.text}</Typography>
-                        </Box>
-                        <Typography
-                          sx={{ mt: 0.6, color: "rgba(240,235,255,0.72)", fontSize: "0.9rem" }}
-                        >
-                          {item.subtitle}
-                        </Typography>
-                      </Box>
-                    ))}
-                  </Box>
-                </Box>
-              </Box>
-            )}
-          </Box>
-        </Box>
-      </Box>
-    </Box>
+    <div className="sculpture" aria-hidden="true">
+      <div className="orbit orbit-one" />
+      <div className="orbit orbit-two" />
+      <div className="orbit orbit-three" />
+      <div className="orbit-core" />
+    </div>
   );
 }
+
+// Keep the complete board visible in short windows, including landscape phones.
+function GameViewport({ children }) {
+  const viewport = useRef(null);
+  const canvas = useRef(null);
+  useEffect(() => {
+    const fit = () => {
+      const { width, height } = viewport.current.getBoundingClientRect();
+      const scale = Math.min(1, height / 560, width / 360);
+      if (scale <= 0) return;
+      Object.assign(canvas.current.style, {
+        width: `${width / scale}px`,
+        height: `${height / scale}px`,
+        transform: `scale(${scale})`,
+      });
+    };
+    fit();
+    const observer = new ResizeObserver(fit);
+    observer.observe(viewport.current);
+    return () => observer.disconnect();
+  }, []);
+  return (
+    <div ref={viewport} className="game-stage">
+      <div ref={canvas} className="game-canvas">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+export default function Navbar() {
+  const [screen, setScreen] = useState("welcome");
+  const [game, setGame] = useState(null);
+  const [limit, setLimit] = useState(10);
+  const [session, setSession] = useState(0);
+  const [sound, setSound] = useState(
+    () => sessionStorage.getItem("mindmate-sound") === "on",
+  );
+  const audio = useRef(null);
+  const screenTitle = useRef(null);
+  const active = exercises.find((item) => item.id === game);
+  const Game = active?.component;
+  useEffect(() => {
+    screenTitle.current?.focus();
+  }, [screen, game]);
+  useEffect(
+    () => () => {
+      audio.current?.close();
+    },
+    [],
+  );
+  function tick() {
+    if (!sound) return;
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    audio.current ||= new AudioContext();
+    const context = audio.current;
+    context.resume();
+    const oscillator = context.createOscillator();
+    const volume = context.createGain();
+    oscillator.frequency.setValueAtTime(440, context.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(
+      220,
+      context.currentTime + 0.12,
+    );
+    volume.gain.setValueAtTime(0.025, context.currentTime);
+    volume.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.15);
+    oscillator.connect(volume);
+    volume.connect(context.destination);
+    oscillator.start();
+    oscillator.stop(context.currentTime + 0.15);
+  }
+
+  function selectGame(id) {
+    tick();
+    setGame(id);
+    setSession((value) => value + 1);
+    setScreen("game");
+  }
+  return (
+    <ThemeProvider theme={theme}>
+      <div className={`app-shell screen-${screen}`}>
+        <header className="site-header">
+          <button
+            className="wordmark"
+            onClick={() => {
+              setScreen("welcome");
+              setGame(null);
+            }}
+            aria-label="MindMate home"
+          >
+            <img className="brand-logo" src="/logo.png" alt="" width="40" height="36" />
+            <span>MindMate</span>
+          </button>
+          <span className="header-note">
+            <span className="status-dot" /> A little sharper, every day.
+          </span>
+        </header>
+        <main id="main">
+          {screen === "welcome" ? (
+            <section className="hero">
+              <div className="hero-topline">
+                <span className="eyebrow">THE EVERYDAY MIND GYM</span>
+                <span className="eyebrow">
+                  FOCUS. SPEED. A FRESH PERSPECTIVE.
+                </span>
+              </div>
+              <Sculpture />
+              <h1 ref={screenTitle} tabIndex={-1} className="hero-title">
+                <span>A LITTLE</span>
+                <span className="hero-middle">
+                  MENTAL<span className="asterisk">✳</span>
+                </span>
+                <span className="outline-word">STRETCH.</span>
+              </h1>
+              <div className="hero-bottom">
+                <p>
+                  Your mind has potential.
+                  <br />
+                  Let's give it a little room to move.
+                </p>
+                <button
+                  className="round-link"
+                  onClick={() => {
+                    tick();
+                    setScreen("menu");
+                  }}
+                >
+                  <span>Start playing</span>
+                  <span className="circle-arrow">↗</span>
+                </button>
+              </div>
+            </section>
+          ) : screen === "menu" ? (
+            <section className="selection-screen">
+              <div className="screen-toolbar">
+                <button
+                  className="text-button"
+                  onClick={() => setScreen("welcome")}
+                >
+                  ← Back
+                </button>
+                <span className="eyebrow">YOUR PACE. YOUR PRACTICE.</span>
+              </div>
+              <div className="menu-heading">
+                <h1 ref={screenTitle} tabIndex={-1}>
+                  Choose your
+                  <br />
+                  <span className="muted">mental stretch.</span>
+                </h1>
+                <p>
+                  Three ways to switch on.
+                  <br />
+                  Pick a game and find your rhythm.
+                </p>
+              </div>
+              <div className="exercise-list">
+                {exercises.map((item, index) => (
+                  <button
+                    className="exercise-row"
+                    key={item.id}
+                    onClick={() => selectGame(item.id)}
+                  >
+                    <span className="exercise-number">0{index + 1}</span>
+                    <span className="exercise-info">
+                      <span className="exercise-skill">{item.skill}</span>
+                      <span className="exercise-name">{item.name}</span>
+                      <span className="exercise-description">
+                        {item.description}
+                      </span>
+                    </span>
+                    <span
+                      className={`exercise-art art-${item.id}`}
+                      aria-hidden="true"
+                    >
+                      {item.id === "vis"
+                        ? "◈"
+                        : item.id === "perc"
+                          ? "a A"
+                          : "03"}
+                    </span>
+                    <span className="exercise-arrow">↗</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+          ) : (
+            <section className="training-screen" aria-label={active.name}>
+              <div className="training-toolbar">
+                <button
+                  className="text-button"
+                  onClick={() => {
+                    setScreen("menu");
+                    setGame(null);
+                  }}
+                >
+                  ← Back to games
+                </button>
+                <h1 ref={screenTitle} tabIndex={-1} className="session-title">
+                  {active.tag}
+                </h1>
+                <div className="session-controls">
+                  <label className="limit-control">
+                    TRIALS{" "}
+                    <input
+                      aria-label="Number of trials"
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={limit}
+                      onChange={(event) => {
+                        setLimit(
+                          Math.min(
+                            100,
+                            Math.max(
+                              1,
+                              Math.trunc(Number(event.target.value)) || 1,
+                            ),
+                          ),
+                        );
+                        setSession((value) => value + 1);
+                      }}
+                    />
+                  </label>
+                  <button
+                    className="text-button"
+                    onClick={() => setSession((value) => value + 1)}
+                  >
+                    Restart ↻
+                  </button>
+                </div>
+              </div>
+              <GameViewport>
+                <Game key={`${game}-${session}`} limit={limit} />
+              </GameViewport>
+            </section>
+          )}
+        </main>
+        <footer className="site-footer">
+          <span>MADE FOR A MIND LIKE YOURS.</span>
+          <button
+            className="sound-toggle"
+            aria-pressed={sound}
+            onClick={() => {
+              const next = !sound;
+              setSound(next);
+              sessionStorage.setItem("mindmate-sound", next ? "on" : "off");
+            }}
+          >
+            <span
+              className={`sound-bars ${sound ? "playing" : ""}`}
+              aria-hidden="true"
+            >
+              <i />
+              <i />
+              <i />
+              <i />
+            </span>
+            SOUND {sound ? "ON" : "OFF"}
+          </button>
+        </footer>
+      </div>
+    </ThemeProvider>
+  );
+}
+

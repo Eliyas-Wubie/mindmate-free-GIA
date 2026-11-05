@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -15,30 +15,26 @@ import TrackChangesRoundedIcon from "@mui/icons-material/TrackChangesRounded";
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
 
 const metricCardStyles = {
-  borderRadius: "20px",
+  borderRadius: "2px",
   px: { xs: 1.6, md: 2.2 },
   py: { xs: 1.2, md: 1.4 },
   minWidth: { md: 190 },
-  background:
-    "linear-gradient(180deg, rgba(22, 19, 43, 0.92) 0%, rgba(16, 14, 35, 0.9) 100%)",
-  border: "1px solid rgba(255,255,255,0.08)",
-  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+  background: "#1c1c1a",
+  border: "1px solid rgba(242,240,235,0.08)",
+  boxShadow: "none",
 };
 
 const panelBase = {
-  background:
-    "linear-gradient(180deg, rgba(15, 13, 33, 0.95) 0%, rgba(10, 12, 30, 0.95) 100%)",
-  border: "1px solid rgba(255,255,255,0.06)",
-  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+  background: "#1c1c1a",
+  border: "1px solid rgba(242,240,235,0.06)",
+  boxShadow: "none",
 };
 
 const boardGlow = {
   borderRadius: { xs: "28px", md: "34px" },
-  background:
-    "linear-gradient(135deg, rgba(255, 78, 193, 0.92) 0%, rgba(104, 84, 255, 0.88) 48%, rgba(63, 145, 255, 0.92) 100%)",
+  background: "#1c1c1a",
   p: "1px",
-  boxShadow:
-    "0 0 0 1px rgba(255,255,255,0.05), 0 22px 54px rgba(0,0,0,0.34), 0 0 28px rgba(83, 123, 255, 0.24)",
+  boxShadow: "none",
 };
 
 export default function NumSpeed({ limit }) {
@@ -89,7 +85,9 @@ export default function NumSpeed({ limit }) {
 
     setLastSpeed(newTime);
     setAverageSpeed((prev) =>
-      numberOfTrials > 0 ? (prev * numberOfTrials + newTime) / nextTrials : newTime
+      numberOfTrials > 0
+        ? (prev * numberOfTrials + newTime) / nextTrials
+        : newTime,
     );
     setNumberOfCorrects(nextCorrects);
     setNumberOfTrials(nextTrials);
@@ -109,7 +107,8 @@ export default function NumSpeed({ limit }) {
 
   const roundAverageSpeed = (averageSpeed / 1000).toFixed(3);
   const roundAccuracy = accuracy.toFixed(3);
-  const currentTimer = lastSpeed !== null ? (lastSpeed / 1000).toFixed(2) : "0.00";
+  const currentTimer =
+    lastSpeed !== null ? (lastSpeed / 1000).toFixed(2) : "0.00";
   const progressValue = limit > 0 ? (numberOfTrials / limit) * 100 : 0;
   const currentTrial = Math.min(numberOfTrials + 1, limit);
 
@@ -130,26 +129,26 @@ export default function NumSpeed({ limit }) {
         onClose={() => setOpenRule(false)}
         PaperProps={{
           sx: {
-            borderRadius: "24px",
-            background: "linear-gradient(180deg, #15102c 0%, #0f1128 100%)",
+            borderRadius: "2px",
+            background: "#1c1c1a",
             color: "#fff",
-            border: "1px solid rgba(255,255,255,0.08)",
+            border: "1px solid rgba(242,240,235,0.08)",
           },
         }}
       >
         <DialogTitle>Number Speed Rules</DialogTitle>
         <DialogContent>
-          <Typography paragraph sx={{ color: "rgba(238,232,255,0.82)" }}>
-            You will see three different numbers. Two are closer together and one
-            is the true outlier. Tap the number that stands out the most.
+          <Typography paragraph sx={{ color: "rgba(242,240,235,0.82)" }}>
+            You will see three different numbers. Two are closer together and
+            one is the true outlier. Tap the number that stands out the most.
           </Typography>
-          <Typography sx={{ color: "rgba(238,232,255,0.82)" }}>
+          <Typography sx={{ color: "rgba(242,240,235,0.82)" }}>
             This mode measures fast comparison, numerical intuition, and clean
             accuracy under a time limit.
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenRule(false)} sx={{ color: "#ff6ecf" }}>
+          <Button onClick={() => setOpenRule(false)} sx={{ color: "#f2f0eb" }}>
             Close
           </Button>
         </DialogActions>
@@ -171,13 +170,11 @@ export default function NumSpeed({ limit }) {
             sx={{
               width: 62,
               height: 62,
-              borderRadius: "20px",
+              borderRadius: "2px",
               display: "grid",
               placeItems: "center",
-              background:
-                "linear-gradient(180deg, rgba(255, 95, 192, 0.95) 0%, rgba(126, 84, 255, 0.92) 100%)",
-              boxShadow:
-                "0 0 0 1px rgba(255,255,255,0.08), 0 18px 28px rgba(164, 89, 255, 0.28)",
+              background: "#1c1c1a",
+              boxShadow: "none",
             }}
           >
             <TagRoundedIcon />
@@ -194,17 +191,33 @@ export default function NumSpeed({ limit }) {
             >
               Number Speed & Accuracy
             </Typography>
-            <Typography sx={{ color: "rgba(228, 220, 255, 0.75)", mt: 0.35 }}>
+            <Typography sx={{ color: "rgba(242,240,235,0.75)", mt: 0.35 }}>
               Spot the outlier. Trust the pattern. Move quickly.
             </Typography>
           </Box>
         </Box>
 
-        <Box sx={{ display: "flex", alignItems: "stretch", gap: 1.2, flexWrap: "wrap" }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "stretch",
+            gap: 1.2,
+            flexWrap: "wrap",
+          }}
+        >
           <Box sx={metricCardStyles}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#c16aff" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                color: "#f2f0eb",
+              }}
+            >
               <SpeedRoundedIcon sx={{ fontSize: 20 }} />
-              <Typography sx={{ color: "rgba(222,214,255,0.68)", fontSize: "0.8rem" }}>
+              <Typography
+                sx={{ color: "rgba(242,240,235,0.68)", fontSize: "0.8rem" }}
+              >
                 AVG SPEED
               </Typography>
             </Box>
@@ -214,9 +227,18 @@ export default function NumSpeed({ limit }) {
           </Box>
 
           <Box sx={metricCardStyles}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "#ff4fb7" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                color: "#f2f0eb",
+              }}
+            >
               <TrackChangesRoundedIcon sx={{ fontSize: 20 }} />
-              <Typography sx={{ color: "rgba(222,214,255,0.68)", fontSize: "0.8rem" }}>
+              <Typography
+                sx={{ color: "rgba(242,240,235,0.68)", fontSize: "0.8rem" }}
+              >
                 ACCURACY
               </Typography>
             </Box>
@@ -227,7 +249,12 @@ export default function NumSpeed({ limit }) {
 
           <Button
             onClick={() => setOpenRule(true)}
-            sx={{ minWidth: 54, borderRadius: "20px", color: "#fff", ...panelBase }}
+            sx={{
+              minWidth: 54,
+              borderRadius: "2px",
+              color: "#fff",
+              ...panelBase,
+            }}
           >
             <HelpOutlineRoundedIcon />
           </Button>
@@ -237,7 +264,7 @@ export default function NumSpeed({ limit }) {
       <Box
         sx={{
           ...panelBase,
-          borderRadius: "28px",
+          borderRadius: "2px",
           p: { xs: 1, md: 1.3 },
           overflow: "visible",
           flex: 1,
@@ -249,19 +276,23 @@ export default function NumSpeed({ limit }) {
         <Box sx={{ textAlign: "center", py: { xs: 0.7, md: 1 } }}>
           <Typography
             sx={{
-              fontFamily: '"Bahnschrift", "Trebuchet MS", sans-serif',
+              fontFamily: '"DM Sans", Arial, sans-serif',
               fontSize: { xs: "2.6rem", md: "3.8rem" },
               fontWeight: 900,
               letterSpacing: "-0.06em",
               lineHeight: 0.92,
               color: "#fff",
-              textShadow: "0 0 16px rgba(136, 96, 255, 0.34)",
+              textShadow: "none",
             }}
           >
             {currentTimer}
             <Box
               component="span"
-              sx={{ ml: 1, fontSize: { xs: "1.1rem", md: "1.6rem" }, color: "#ff4bb5" }}
+              sx={{
+                ml: 1,
+                fontSize: { xs: "1.1rem", md: "1.6rem" },
+                color: "#f2f0eb",
+              }}
             >
               SEC
             </Box>
@@ -275,20 +306,19 @@ export default function NumSpeed({ limit }) {
             sx={{
               height: 11,
               borderRadius: 999,
-              backgroundColor: "rgba(18, 22, 48, 0.8)",
-              border: "1px solid rgba(255,255,255,0.08)",
+              backgroundColor: "rgba(28,28,26,0.8)",
+              border: "1px solid rgba(242,240,235,0.08)",
               "& .MuiLinearProgress-bar": {
                 borderRadius: 999,
-                background:
-                  "linear-gradient(90deg, rgba(255,75,181,1) 0%, rgba(185,91,255,1) 52%, rgba(85,214,255,1) 100%)",
-                boxShadow: "0 0 16px rgba(88, 194, 255, 0.45)",
+                background: "#f2f0eb",
+                boxShadow: "none",
               },
             }}
           />
           <Typography
             sx={{
               textAlign: "center",
-              color: "rgba(224,218,255,0.72)",
+              color: "rgba(242,240,235,0.72)",
               fontSize: "0.82rem",
               mt: 0.6,
             }}
@@ -303,8 +333,7 @@ export default function NumSpeed({ limit }) {
               position: "relative",
               overflow: "hidden",
               borderRadius: { xs: "27px", md: "33px" },
-              background:
-                "radial-gradient(circle at 15% 55%, rgba(255, 63, 180, 0.12) 0%, rgba(255, 63, 180, 0) 26%), radial-gradient(circle at 85% 75%, rgba(69, 142, 255, 0.15) 0%, rgba(69, 142, 255, 0) 30%), linear-gradient(180deg, rgba(17, 16, 40, 0.98) 0%, rgba(9, 14, 33, 0.98) 100%)",
+              background: "#1c1c1a",
               px: { xs: 1, md: 1.8 },
               py: { xs: 1, md: 1.4 },
               height: "100%",
@@ -318,8 +347,7 @@ export default function NumSpeed({ limit }) {
                 inset: 0,
                 pointerEvents: "none",
                 opacity: 0.28,
-                backgroundImage:
-                  "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
+                backgroundImage: "#1c1c1a",
                 backgroundSize: "42px 42px",
               }}
             />
@@ -336,17 +364,27 @@ export default function NumSpeed({ limit }) {
                 gap: 1,
               }}
             >
-              <Typography sx={{ color: gotIt === "yes" ? "#7effb0" : gotIt === "no" ? "#ff8ab8" : "transparent", fontWeight: 700 }}>
+              <Typography
+                sx={{
+                  color:
+                    gotIt === "yes"
+                      ? "#b9cbaa"
+                      : gotIt === "no"
+                        ? "#d5a794"
+                        : "transparent",
+                  fontWeight: 700,
+                }}
+              >
                 {gotIt === "yes" ? "Correct" : gotIt === "no" ? "Wrong" : "."}
               </Typography>
               <Box
                 sx={{
                   px: 1.6,
                   py: 0.6,
-                  borderRadius: "999px",
-                  background: "rgba(18, 21, 45, 0.85)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  color: "rgba(236,230,255,0.92)",
+                  borderRadius: "2px",
+                  background: "rgba(28,28,26,0.85)",
+                  border: "1px solid rgba(242,240,235,0.08)",
+                  color: "rgba(242,240,235,0.92)",
                   fontWeight: 700,
                   fontSize: "0.95rem",
                 }}
@@ -384,18 +422,16 @@ export default function NumSpeed({ limit }) {
                         sx={{
                           minWidth: { xs: 88, md: 116 },
                           height: { xs: 58, md: 72 },
-                          borderRadius: "18px",
+                          borderRadius: "2px",
                           fontSize: { xs: "1.45rem", md: "2rem" },
                           fontWeight: 800,
                           color: "#fff",
-                          background:
-                            "linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.08) 100%)",
-                          border: "1px solid rgba(255,255,255,0.12)",
-                          boxShadow: "0 16px 28px rgba(0,0,0,0.2)",
+                          background: "#1c1c1a",
+                          border: "1px solid rgba(242,240,235,0.12)",
+                          boxShadow: "none",
                           backdropFilter: "blur(8px)",
                           "&:hover": {
-                            background:
-                              "linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%)",
+                            background: "#1c1c1a",
                           },
                         }}
                       >
@@ -408,7 +444,7 @@ export default function NumSpeed({ limit }) {
                     sx={{
                       mt: 2,
                       textAlign: "center",
-                      color: "rgba(237, 232, 255, 0.9)",
+                      color: "rgba(242,240,235,0.9)",
                       fontSize: { xs: "0.92rem", md: "1rem" },
                     }}
                   >
@@ -416,12 +452,25 @@ export default function NumSpeed({ limit }) {
                   </Typography>
                 </Box>
               ) : (
-                <Box sx={{ textAlign: "center", px: 2, position: "relative", zIndex: 1 }}>
-                  <Typography sx={{ fontSize: { xs: "1.4rem", md: "2rem" }, fontWeight: 800 }}>
+                <Box
+                  sx={{
+                    textAlign: "center",
+                    px: 2,
+                    position: "relative",
+                    zIndex: 1,
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: { xs: "1.4rem", md: "2rem" },
+                      fontWeight: 800,
+                    }}
+                  >
                     Test completed
                   </Typography>
-                  <Typography sx={{ mt: 1, color: "rgba(229, 221, 255, 0.8)" }}>
-                    Accuracy: {roundAccuracy}% | Average Speed: {roundAverageSpeed} sec
+                  <Typography sx={{ mt: 1, color: "rgba(242,240,235,0.8)" }}>
+                    Accuracy: {roundAccuracy}% | Average Speed:{" "}
+                    {roundAverageSpeed} sec
                   </Typography>
                 </Box>
               )}
@@ -433,7 +482,7 @@ export default function NumSpeed({ limit }) {
           sx={{
             pt: 1.2,
             textAlign: "center",
-            color: "rgba(168, 158, 210, 0.7)",
+            color: "#92908d",
             fontSize: "0.72rem",
             letterSpacing: "0.18em",
             textTransform: "uppercase",

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -15,32 +15,28 @@ import TrackChangesRoundedIcon from "@mui/icons-material/TrackChangesRounded";
 import HelpOutlineRoundedIcon from "@mui/icons-material/HelpOutlineRounded";
 
 const metricCardStyles = {
-  borderRadius: "18px",
+  borderRadius: "2px",
   px: { xs: 1, md: 1.35 },
   py: { xs: 0.7, md: 0.8 },
   minWidth: { md: 170 },
-  background:
-    "linear-gradient(180deg, rgba(22, 19, 43, 0.92) 0%, rgba(16, 14, 35, 0.9) 100%)",
-  border: "1px solid rgba(255,255,255,0.08)",
-  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+  background: "#1c1c1a",
+  border: "1px solid rgba(242,240,235,0.08)",
+  boxShadow: "none",
 };
 
 const boardGlow = {
   borderRadius: { xs: "24px", md: "30px" },
-  background:
-    "linear-gradient(135deg, rgba(255, 78, 193, 0.92) 0%, rgba(104, 84, 255, 0.88) 48%, rgba(63, 145, 255, 0.92) 100%)",
+  background: "#1c1c1a",
   p: "1px",
-  boxShadow:
-    "0 0 0 1px rgba(255,255,255,0.05), 0 20px 48px rgba(0,0,0,0.3), 0 0 24px rgba(83, 123, 255, 0.22)",
+  boxShadow: "none",
   flex: 1,
   minHeight: 0,
 };
 
 const panelBase = {
-  background:
-    "linear-gradient(180deg, rgba(15, 13, 33, 0.95) 0%, rgba(10, 12, 30, 0.95) 100%)",
-  border: "1px solid rgba(255,255,255,0.06)",
-  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+  background: "#1c1c1a",
+  border: "1px solid rgba(242,240,235,0.06)",
+  boxShadow: "none",
 };
 
 export default function SpaceVis({ limit }) {
@@ -62,7 +58,8 @@ export default function SpaceVis({ limit }) {
     const degrees = [0, 90, 180, 270];
     const randomDegree = degrees[Math.floor(Math.random() * degrees.length)];
     const flipOptions = [true, false];
-    const randomFlip = flipOptions[Math.floor(Math.random() * flipOptions.length)];
+    const randomFlip =
+      flipOptions[Math.floor(Math.random() * flipOptions.length)];
 
     return {
       flipped: randomFlip,
@@ -75,8 +72,8 @@ export default function SpaceVis({ limit }) {
             display: "grid",
             placeItems: "center",
             background:
-              "linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(246,241,255,0.98) 100%)",
-            boxShadow: "0 0 16px rgba(255, 96, 210, 0.22), 0 12px 22px rgba(0,0,0,0.18)",
+              "linear-gradient(180deg, rgba(242,240,235,1) 0%, rgba(242,240,235,0.98) 100%)",
+            boxShadow: "none",
             "@media (min-width:600px) and (max-width:899px)": {
               width: "132px",
             },
@@ -110,7 +107,9 @@ export default function SpaceVis({ limit }) {
 
     setLastSpeed(newTime);
     setAverageSpeed((prev) =>
-      numberOfTrials > 0 ? (prev * numberOfTrials + newTime) / nextTrials : newTime
+      numberOfTrials > 0
+        ? (prev * numberOfTrials + newTime) / nextTrials
+        : newTime,
     );
     setNumberOfCorrects(nextCorrects);
     setNumberOfTrials(nextTrials);
@@ -132,7 +131,8 @@ export default function SpaceVis({ limit }) {
     while (randomIndices.length < 2) {
       if (images.length > 1) {
         const randomIndex = Math.floor(Math.random() * images.length);
-        if (!randomIndices.includes(randomIndex)) randomIndices.push(randomIndex);
+        if (!randomIndices.includes(randomIndex))
+          randomIndices.push(randomIndex);
       } else {
         randomIndices.push(0);
       }
@@ -154,7 +154,10 @@ export default function SpaceVis({ limit }) {
         unmatched += 1;
       }
 
-      tempImagePairs.push([transformationResult1.image, transformationResult2.image]);
+      tempImagePairs.push([
+        transformationResult1.image,
+        transformationResult2.image,
+      ]);
     }
 
     setSelectedIndices(randomIndices);
@@ -168,7 +171,8 @@ export default function SpaceVis({ limit }) {
 
   const roundAverageSpeed = (averageSpeed / 1000).toFixed(3);
   const roundAccuracy = accuracy.toFixed(3);
-  const currentTimer = lastSpeed !== null ? (lastSpeed / 1000).toFixed(2) : "0.00";
+  const currentTimer =
+    lastSpeed !== null ? (lastSpeed / 1000).toFixed(2) : "0.00";
   const progressValue = limit > 0 ? (numberOfTrials / limit) * 100 : 0;
   const currentTrial = Math.min(numberOfTrials + 1, limit);
 
@@ -188,25 +192,28 @@ export default function SpaceVis({ limit }) {
         onClose={() => setOpenRulePopup(false)}
         PaperProps={{
           sx: {
-            borderRadius: "24px",
-            background: "linear-gradient(180deg, #15102c 0%, #0f1128 100%)",
+            borderRadius: "2px",
+            background: "#1c1c1a",
             color: "#fff",
-            border: "1px solid rgba(255,255,255,0.08)",
+            border: "1px solid rgba(242,240,235,0.08)",
           },
         }}
       >
         <DialogTitle>Spatial Visualization Rules</DialogTitle>
         <DialogContent>
-          <Typography paragraph sx={{ color: "rgba(238,232,255,0.82)" }}>
-            Count how many shapes are different from the target after rotation and
-            mirror checks.
+          <Typography paragraph sx={{ color: "rgba(242,240,235,0.82)" }}>
+            Count how many shapes are different from the target after rotation
+            and mirror checks.
           </Typography>
-          <Typography sx={{ color: "rgba(238,232,255,0.82)" }}>
+          <Typography sx={{ color: "rgba(242,240,235,0.82)" }}>
             This mode measures mental rotation and fast spatial judgment.
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenRulePopup(false)} sx={{ color: "#ff6ecf" }}>
+          <Button
+            onClick={() => setOpenRulePopup(false)}
+            sx={{ color: "#f2f0eb" }}
+          >
             Close
           </Button>
         </DialogActions>
@@ -231,13 +238,11 @@ export default function SpaceVis({ limit }) {
             sx={{
               width: 48,
               height: 48,
-              borderRadius: "16px",
+              borderRadius: "2px",
               display: "grid",
               placeItems: "center",
-              background:
-                "linear-gradient(180deg, rgba(181, 91, 255, 0.95) 0%, rgba(120, 82, 255, 0.92) 100%)",
-              boxShadow:
-                "0 0 0 1px rgba(255,255,255,0.08), 0 16px 24px rgba(164, 89, 255, 0.24)",
+              background: "#1c1c1a",
+              boxShadow: "none",
             }}
           >
             <Inventory2RoundedIcon sx={{ fontSize: 20 }} />
@@ -254,17 +259,39 @@ export default function SpaceVis({ limit }) {
             >
               Spatial Visualization
             </Typography>
-            <Typography sx={{ color: "rgba(228, 220, 255, 0.75)", mt: 0.15, fontSize: "0.82rem" }}>
+            <Typography
+              sx={{
+                color: "rgba(242,240,235,0.75)",
+                mt: 0.15,
+                fontSize: "0.82rem",
+              }}
+            >
               Spot the Match. Think in 3D. Beat the Clock.
             </Typography>
           </Box>
         </Box>
 
-        <Box sx={{ display: "flex", alignItems: "stretch", gap: 0.7, flexWrap: "wrap" }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "stretch",
+            gap: 0.7,
+            flexWrap: "wrap",
+          }}
+        >
           <Box sx={metricCardStyles}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.7, color: "#c16aff" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.7,
+                color: "#f2f0eb",
+              }}
+            >
               <SpeedRoundedIcon sx={{ fontSize: 16 }} />
-              <Typography sx={{ color: "rgba(222,214,255,0.68)", fontSize: "0.68rem" }}>
+              <Typography
+                sx={{ color: "rgba(242,240,235,0.68)", fontSize: "0.68rem" }}
+              >
                 AVG SPEED
               </Typography>
             </Box>
@@ -274,9 +301,18 @@ export default function SpaceVis({ limit }) {
           </Box>
 
           <Box sx={metricCardStyles}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 0.7, color: "#ff4fb7" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.7,
+                color: "#f2f0eb",
+              }}
+            >
               <TrackChangesRoundedIcon sx={{ fontSize: 16 }} />
-              <Typography sx={{ color: "rgba(222,214,255,0.68)", fontSize: "0.68rem" }}>
+              <Typography
+                sx={{ color: "rgba(242,240,235,0.68)", fontSize: "0.68rem" }}
+              >
                 ACCURACY
               </Typography>
             </Box>
@@ -287,9 +323,17 @@ export default function SpaceVis({ limit }) {
 
           <Button
             onClick={() => setOpenRulePopup(true)}
-            sx={{ minWidth: 42, borderRadius: "18px", color: "#fff", ...panelBase }}
+            sx={{
+              minWidth: 42,
+              borderRadius: "2px",
+              color: "#fff",
+              ...panelBase,
+            }}
           >
-            <HelpOutlineRoundedIcon sx={{ fontSize: 20 }} />
+            <HelpOutlineRoundedIcon
+              titleAccess="Show exercise rules"
+              sx={{ fontSize: 20 }}
+            />
           </Button>
         </Box>
       </Box>
@@ -297,7 +341,7 @@ export default function SpaceVis({ limit }) {
       <Box
         sx={{
           ...panelBase,
-          borderRadius: "26px",
+          borderRadius: "2px",
           p: { xs: 0.65, md: 0.7, lg: 0.85 },
           flex: 1,
           minHeight: 0,
@@ -321,13 +365,13 @@ export default function SpaceVis({ limit }) {
         >
           <Typography
             sx={{
-              fontFamily: '"Bahnschrift", "Trebuchet MS", sans-serif',
+              fontFamily: '"DM Sans", Arial, sans-serif',
               fontSize: { xs: "1.8rem", md: "2.1rem", lg: "2.5rem" },
               fontWeight: 900,
               letterSpacing: "-0.06em",
               lineHeight: 0.92,
               color: "#fff",
-              textShadow: "0 0 14px rgba(136, 96, 255, 0.3)",
+              textShadow: "none",
               "@media (max-height:820px)": {
                 fontSize: "1.85rem",
               },
@@ -339,7 +383,7 @@ export default function SpaceVis({ limit }) {
               sx={{
                 ml: 0.7,
                 fontSize: { xs: "0.85rem", md: "0.95rem", lg: "1.1rem" },
-                color: "#ff4bb5",
+                color: "#f2f0eb",
               }}
             >
               SEC
@@ -363,19 +407,18 @@ export default function SpaceVis({ limit }) {
             sx={{
               height: { xs: 7, md: 6, lg: 7 },
               borderRadius: 999,
-              backgroundColor: "rgba(18, 22, 48, 0.8)",
-              border: "1px solid rgba(255,255,255,0.08)",
+              backgroundColor: "rgba(28,28,26,0.8)",
+              border: "1px solid rgba(242,240,235,0.08)",
               "& .MuiLinearProgress-bar": {
                 borderRadius: 999,
-                background:
-                  "linear-gradient(90deg, rgba(255,75,181,1) 0%, rgba(185,91,255,1) 52%, rgba(85,214,255,1) 100%)",
+                background: "#f2f0eb",
               },
             }}
           />
           <Typography
             sx={{
               textAlign: "center",
-              color: "rgba(224,218,255,0.72)",
+              color: "rgba(242,240,235,0.72)",
               fontSize: "0.66rem",
               mt: 0.3,
             }}
@@ -390,8 +433,7 @@ export default function SpaceVis({ limit }) {
               position: "relative",
               overflow: "hidden",
               borderRadius: { xs: "23px", md: "29px" },
-              background:
-                "radial-gradient(circle at 15% 55%, rgba(255, 63, 180, 0.12) 0%, rgba(255, 63, 180, 0) 26%), radial-gradient(circle at 85% 75%, rgba(69, 142, 255, 0.15) 0%, rgba(69, 142, 255, 0) 30%), linear-gradient(180deg, rgba(17, 16, 40, 0.98) 0%, rgba(9, 14, 33, 0.98) 100%)",
+              background: "#1c1c1a",
               px: { xs: 0.7, md: 0.8, lg: 1 },
               py: { xs: 0.7, md: 0.7, lg: 0.85 },
               height: "100%",
@@ -409,8 +451,7 @@ export default function SpaceVis({ limit }) {
                 inset: 0,
                 pointerEvents: "none",
                 opacity: 0.22,
-                backgroundImage:
-                  "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
+                backgroundImage: "#1c1c1a",
                 backgroundSize: "36px 36px",
               }}
             />
@@ -431,9 +472,9 @@ export default function SpaceVis({ limit }) {
                   minWidth: 64,
                   color:
                     gotIt === "yes"
-                      ? "#7effb0"
+                      ? "#b9cbaa"
                       : gotIt === "no"
-                        ? "#ff8ab8"
+                        ? "#d5a794"
                         : "transparent",
                   fontWeight: 700,
                   fontSize: { xs: "0.68rem", md: "0.8rem" },
@@ -445,10 +486,10 @@ export default function SpaceVis({ limit }) {
                 sx={{
                   px: 0.9,
                   py: 0.3,
-                  borderRadius: "999px",
-                  background: "rgba(18, 21, 45, 0.85)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  color: "rgba(236,230,255,0.92)",
+                  borderRadius: "2px",
+                  background: "rgba(28,28,26,0.85)",
+                  border: "1px solid rgba(242,240,235,0.08)",
+                  color: "rgba(242,240,235,0.92)",
                   fontWeight: 700,
                   fontSize: "0.72rem",
                 }}
@@ -488,7 +529,8 @@ export default function SpaceVis({ limit }) {
                       columnGap: { xs: 0.4, sm: 0.9, md: 0.65, lg: 0.9 },
                       rowGap: { xs: 0.5, sm: 0.5, md: 0.65, lg: 0.9 },
                       "@media (max-height:820px)": {
-                        gridTemplateColumns: "repeat(2, clamp(84px, min(8vw, 12vh), 96px))",
+                        gridTemplateColumns:
+                          "repeat(2, clamp(84px, min(8vw, 12vh), 96px))",
                         columnGap: 0.5,
                         rowGap: 0.45,
                       },
@@ -511,7 +553,7 @@ export default function SpaceVis({ limit }) {
                           },
                         }}
                       >
-                        {image }
+                        {image}
                       </Box>
                     ))}
                   </Box>
@@ -538,8 +580,12 @@ export default function SpaceVis({ limit }) {
                       sx={{
                         mt: { xs: 0.45, sm: 0.5, md: 0.55, lg: 0.75 },
                         textAlign: "center",
-                        color: "rgba(237, 232, 255, 0.9)",
-                        fontSize: { xs: "0.74rem", sm: "0.88rem", md: "0.84rem" },
+                        color: "rgba(242,240,235,0.9)",
+                        fontSize: {
+                          xs: "0.74rem",
+                          sm: "0.88rem",
+                          md: "0.84rem",
+                        },
                         "@media (max-height:820px)": {
                           mt: 0.35,
                           fontSize: "0.78rem",
@@ -563,8 +609,6 @@ export default function SpaceVis({ limit }) {
                       }}
                     >
                       {[0, 1, 2].map((num) => {
-                        const isPrimary = num === 1;
-                        const isSecondary = num === 2;
 
                         return (
                           <Button
@@ -573,20 +617,17 @@ export default function SpaceVis({ limit }) {
                             sx={{
                               minWidth: { xs: 74, sm: 96, md: 68, lg: 74 },
                               height: { xs: 32, sm: 38, md: 30, lg: 32 },
-                              borderRadius: "999px",
-                              fontSize: { xs: "0.8rem", sm: "0.92rem", md: "0.76rem", lg: "0.8rem" },
+                              borderRadius: "2px",
+                              fontSize: {
+                                xs: "0.8rem",
+                                sm: "0.92rem",
+                                md: "0.76rem",
+                                lg: "0.8rem",
+                              },
                               fontWeight: 800,
                               color: "#fff",
-                              background: isPrimary
-                                ? "linear-gradient(90deg, rgba(255,75,181,0.95) 0%, rgba(162,82,255,0.95) 100%)"
-                                : isSecondary
-                                  ? "linear-gradient(90deg, rgba(36,53,120,0.95) 0%, rgba(44,122,255,0.88) 100%)"
-                                  : "linear-gradient(180deg, rgba(53, 42, 85, 0.95) 0%, rgba(36, 31, 60, 0.95) 100%)",
-                              border: isPrimary
-                                ? "1px solid rgba(255, 137, 226, 0.7)"
-                                : isSecondary
-                                  ? "1px solid rgba(93, 174, 255, 0.68)"
-                                  : "1px solid rgba(143, 119, 214, 0.36)",
+                              background: "#1c1c1a",
+                              border: "1px solid transparent",
                               "&:hover": {
                                 filter: "brightness(1.06)",
                               },
@@ -605,14 +646,39 @@ export default function SpaceVis({ limit }) {
                   </Box>
                 </Box>
               ) : (
-                <Box sx={{ textAlign: "center", px: 2, position: "relative", zIndex: 1 }}>
-                  <Typography sx={{ fontSize: { xs: "1.2rem", md: "1.6rem" }, fontWeight: 800 }}>
+                <Box
+                  sx={{
+                    textAlign: "center",
+                    px: 2,
+                    position: "relative",
+                    zIndex: 1,
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: { xs: "1.2rem", md: "1.6rem" },
+                      fontWeight: 800,
+                    }}
+                  >
                     Test completed
                   </Typography>
-                  <Typography sx={{ mt: 0.7, color: "rgba(229, 221, 255, 0.8)", fontSize: "0.85rem" }}>
-                    Accuracy: {roundAccuracy}% | Average Speed: {roundAverageSpeed} sec
+                  <Typography
+                    sx={{
+                      mt: 0.7,
+                      color: "rgba(242,240,235,0.8)",
+                      fontSize: "0.85rem",
+                    }}
+                  >
+                    Accuracy: {roundAccuracy}% | Average Speed:{" "}
+                    {roundAverageSpeed} sec
                   </Typography>
-                  <Typography sx={{ mt: 0.8, color: gotIt === "yes" ? "#7effb0" : "#ff8ab8", fontSize: "0.82rem" }}>
+                  <Typography
+                    sx={{
+                      mt: 0.8,
+                      color: gotIt === "yes" ? "#b9cbaa" : "#d5a794",
+                      fontSize: "0.82rem",
+                    }}
+                  >
                     Last answer: {gotIt === "yes" ? "Correct" : "Incorrect"}
                   </Typography>
                 </Box>
@@ -625,7 +691,7 @@ export default function SpaceVis({ limit }) {
           sx={{
             pt: { xs: 0.45, md: 0.35, lg: 0.45 },
             textAlign: "center",
-            color: "rgba(168, 158, 210, 0.7)",
+            color: "#92908d",
             fontSize: "0.56rem",
             letterSpacing: "0.16em",
             textTransform: "uppercase",
@@ -642,3 +708,4 @@ export default function SpaceVis({ limit }) {
     </Box>
   );
 }
+

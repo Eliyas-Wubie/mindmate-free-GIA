@@ -89,9 +89,14 @@ export default function Navbar() {
   const [game, setGame] = useState(null);
   const [limit, setLimit] = useState(10);
   const [session, setSession] = useState(0);
-  const [sound, setSound] = useState(
-    () => sessionStorage.getItem("mindmate-sound") === "on",
-  );
+  const [sound, setSound] = useState(() => {
+    try {
+      return window.sessionStorage.getItem("mindmate-sound") === "on";
+    } catch {
+      // Sandboxed previews can deny access to the storage property itself.
+      return false;
+    }
+  });
   const audio = useRef(null);
   const screenTitle = useRef(null);
   const active = exercises.find((item) => item.id === game);
@@ -300,7 +305,11 @@ export default function Navbar() {
             onClick={() => {
               const next = !sound;
               setSound(next);
-              sessionStorage.setItem("mindmate-sound", next ? "on" : "off");
+              try {
+                window.sessionStorage.setItem("mindmate-sound", next ? "on" : "off");
+              } catch {
+                // React state keeps the toggle working when persistence is blocked.
+              }
             }}
           >
             <span
@@ -319,4 +328,5 @@ export default function Navbar() {
     </ThemeProvider>
   );
 }
+
 

@@ -46,3 +46,4 @@ Thumbs.db
 !.yarn/sdks
 !.yarn/versions
 .pnpm-store/
+dev_docs/local_only/

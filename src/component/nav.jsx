@@ -170,7 +170,7 @@ export default function Navbar() {
               <h1 ref={screenTitle} tabIndex={-1} className="hero-title">
                 <span>A LITTLE</span>
                 <span className="hero-middle">
-                  MENTAL<span className="asterisk">✳</span>
+                  MENTAL
                 </span>
                 <span className="outline-word">STRETCH.</span>
               </h1>
